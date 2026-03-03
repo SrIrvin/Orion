@@ -1,7 +1,7 @@
-﻿<Application x:Class="Orión.App"
+<Application x:Class="Orión.DesktopUI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Orión"
+             xmlns:local="clr-namespace:Orión.DesktopUI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

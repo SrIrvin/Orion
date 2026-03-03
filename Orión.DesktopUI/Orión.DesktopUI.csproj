@@ -1,5 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\Orión.Application\Orión.Application.csproj" />
+    <ProjectReference Include="..\Orión.Domain\Orión.Domain.csproj" />
+    <ProjectReference Include="..\Orión.Infrastructure\Orión.Infrastructure.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
