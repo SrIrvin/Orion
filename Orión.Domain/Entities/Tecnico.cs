@@ -9,6 +9,8 @@ public class Tecnico
     // Foreign Key
     public int IdTurno { get; set; }
 
+    public bool Activo { get; set; } = true;
+
     // Propiedades de Navegación
     public virtual Turno Turno { get; set; } = null!;
     public virtual ICollection<SolicitudServicio> SolicitudesServicio { get; set; } = new List<SolicitudServicio>();

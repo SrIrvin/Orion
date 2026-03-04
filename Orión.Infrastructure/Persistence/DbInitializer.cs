@@ -11,8 +11,11 @@ public static class DbInitializer
         // Asegura que la base de datos existe y aplica todas las migraciones pendientes
         context.Database.Migrate();
 
-        // 1. Crear usuario administrador por defecto
-        if (!context.Usuarios.Any())
+        // 0. Asegurar esquema actualizado (Hack para desarrollo sin migraciones manuales)
+        context.Database.ExecuteSqlRaw("ALTER TABLE \"Tecnico\" ADD COLUMN IF NOT EXISTS \"Activo\" BOOLEAN DEFAULT TRUE;");
+
+        // 1. Crear usuarios por defecto
+        if (!context.Usuarios.Any(u => u.NombreUsuario == "admin"))
         {
             context.Usuarios.Add(new Usuario
             {
@@ -25,54 +28,56 @@ public static class DbInitializer
             });
         }
 
-        // 2. Asegurar Datos Maestros para Maquinaria (Evitar Violación de FK)
-        if (!context.NivelesCriticos.Any())
+        if (!context.Usuarios.Any(u => u.NombreUsuario == "operador"))
         {
-            context.NivelesCriticos.AddRange(
-                new NivelCritico { IdNivelCritico = 1, Descripcion = "Baja" },
-                new NivelCritico { IdNivelCritico = 2, Descripcion = "Media" },
-                new NivelCritico { IdNivelCritico = 3, Descripcion = "Alta" },
-                new NivelCritico { IdNivelCritico = 4, Descripcion = "Critico" }
-            );
+            context.Usuarios.Add(new Usuario
+            {
+                NombreUsuario = "operador",
+                PasswordHash = BC.HashPassword("user123"),
+                Email = "operador@orion.com",
+                Rol = "Operador",
+                FechaCreacion = DateTime.UtcNow,
+                Activo = true
+            });
         }
+        context.SaveChanges();
 
-        if (!context.Ubicaciones.Any())
+        // 2. Asegurar Ubicaciones (Nave 1 es fundamental para el seed)
+        if (!context.Ubicaciones.Any(u => u.NumeroNave == 1))
         {
             context.Ubicaciones.Add(new Ubicacion { NumeroNave = 1 });
+            context.SaveChanges();
         }
-
-        context.SaveChanges(); // Guardar catálogos primero
 
         // 3. Datos de prueba para Maquinaria
         if (!context.Maquinarias.Any())
         {
-            var nivelAlta = context.NivelesCriticos.First(n => n.IdNivelCritico == 3);
-            var ubicacionNave1 = context.Ubicaciones.First(u => u.NumeroNave == 1);
+            var ubicacionId = context.Ubicaciones.First(u => u.NumeroNave == 1).IdUbicacion;
 
-            context.Maquinarias.Add(new Maquinaria
-            {
-                IdMaquinaria = "MAQ-001",
-                NombreMaquina = "Prensa Hidr 50T",
-                Tipo = "Prensa",
-                Marca = "HydraForce",
-                Modelo = "HF-50",
-                FechaInstalacion = DateTime.UtcNow.AddYears(-2),
-                IdNivelCritico = nivelAlta.IdNivelCritico,
-                IdUbicacion = ubicacionNave1.IdUbicacion
-            });
-
-            context.Maquinarias.Add(new Maquinaria
-            {
-                IdMaquinaria = "MAQ-002",
-                NombreMaquina = "Torno CNC Quick",
-                Tipo = "Torno",
-                Marca = "Mazak",
-                Modelo = "Quick Turn 250",
-                FechaInstalacion = DateTime.UtcNow.AddYears(-1),
-                IdNivelCritico = 4,
-                IdUbicacion = ubicacionNave1.IdUbicacion
-            });
-            
+            context.Maquinarias.AddRange(
+                new Maquinaria
+                {
+                    IdMaquinaria = "MAQ-001",
+                    NombreMaquina = "Prensa Hidr 50T",
+                    Tipo = "Prensa",
+                    Marca = "HydraForce",
+                    Modelo = "HF-50",
+                    FechaInstalacion = DateTime.UtcNow.AddYears(-2),
+                    IdNivelCritico = 3, // Alta
+                    IdUbicacion = ubicacionId
+                },
+                new Maquinaria
+                {
+                    IdMaquinaria = "MAQ-002",
+                    NombreMaquina = "Torno CNC Quick",
+                    Tipo = "Torno",
+                    Marca = "Mazak",
+                    Modelo = "Quick Turn 250",
+                    FechaInstalacion = DateTime.UtcNow.AddYears(-1),
+                    IdNivelCritico = 4, // Critico
+                    IdUbicacion = ubicacionId
+                }
+            );
             context.SaveChanges();
         }
 
@@ -80,9 +85,9 @@ public static class DbInitializer
         if (!context.Tecnicos.Any())
         {
             context.Tecnicos.AddRange(
-                new Tecnico { IdPersonal = 101, NombreApellido = "Sr. Juan Pérez", Especialidad = "Mecánico", IdTurno = 1 },
-                new Tecnico { IdPersonal = 102, NombreApellido = "Ing. Maria García", Especialidad = "Electrónica", IdTurno = 2 },
-                new Tecnico { IdPersonal = 103, NombreApellido = "Pedro López", Especialidad = "Soldador", IdTurno = 3 }
+                new Tecnico { IdPersonal = 101, NombreApellido = "Sr. Juan Pérez", Especialidad = "Mecánico", IdTurno = 1, Activo = true },
+                new Tecnico { IdPersonal = 102, NombreApellido = "Ing. Maria García", Especialidad = "Electrónica", IdTurno = 2, Activo = true },
+                new Tecnico { IdPersonal = 103, NombreApellido = "Pedro López", Especialidad = "Soldador", IdTurno = 3, Activo = true }
             );
             context.SaveChanges();
         }

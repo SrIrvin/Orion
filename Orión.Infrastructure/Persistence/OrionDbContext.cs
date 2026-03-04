@@ -27,7 +27,8 @@ public class OrionDbContext : DbContext, IOrionDbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=DB_Orion;Username=admin;Password=Mast3rC0mput0;CommandTimeout=30;Trust Server Certificate=true");
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=DB_Orion;Username=admin;Password=Mast3rC0mput0;CommandTimeout=30;Trust Server Certificate=true")
+                          .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
         }
     }
 
@@ -137,6 +138,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
             entity.Property(e => e.NombreApellido).HasColumnName("Nombre_Apellido").HasMaxLength(50).IsRequired();
             entity.Property(e => e.Especialidad).HasColumnName("Especialidad").HasMaxLength(50);
             entity.Property(e => e.IdTurno).HasColumnName("ID_Turno");
+            entity.Property(e => e.Activo).HasColumnName("Activo").HasDefaultValue(true);
 
             entity.HasOne(d => d.Turno)
                 .WithMany(p => p.Tecnicos)

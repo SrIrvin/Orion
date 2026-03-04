@@ -1,0 +1,55 @@
+<UserControl x:Class="Orión.DesktopUI.Views.TecnicoEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             Width="400">
+    <Border Background="{DynamicResource MaterialDesignPaper}" 
+            CornerRadius="8" 
+            Padding="24"
+            materialDesign:ElevationAssist.Elevation="Dp8">
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,24"/>
+            
+            <TextBox materialDesign:HintAssist.Hint="ID Personal (Número)" 
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding IdPersonal, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding IsNew}"
+                     Margin="0,0,0,16"/>
+
+            <TextBox materialDesign:HintAssist.Hint="Nombre y Apellido" 
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding NombreApellido, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,16"/>
+
+            <TextBox materialDesign:HintAssist.Hint="Especialidad" 
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding Especialidad, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,16"/>
+
+            <ComboBox materialDesign:HintAssist.Hint="Turno"
+                      Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                      ItemsSource="{Binding Turnos}"
+                      DisplayMemberPath="DescripcionTurno"
+                      SelectedValuePath="IdTurno"
+                      SelectedValue="{Binding IdTurno}"
+                      Margin="0,0,0,24"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Content="CANCELAR"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                    <Button.CommandParameter>
+                        <Binding RelativeSource="{RelativeSource Self}" />
+                    </Button.CommandParameter>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Content="GUARDAR"
+                        Command="{Binding SaveCommand}"
+                        Margin="8,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

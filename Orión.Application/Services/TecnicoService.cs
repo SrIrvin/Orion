@@ -15,22 +15,31 @@ public class TecnicoService : ITecnicoService
         _context = context;
     }
 
-    public async Task<IEnumerable<TecnicoDto>> GetAllDtoAsync()
+    public async Task<IEnumerable<TecnicoDto>> GetAllDtoAsync(bool includeInactive = false)
     {
         var tecnicos = await _repository.GetAllWithIncludesAsync(t => t.Turno);
+        
+        var query = tecnicos.AsEnumerable();
+        if (!includeInactive)
+        {
+            query = query.Where(t => t.Activo);
+        }
 
-        return tecnicos.Select(t => new TecnicoDto
+        return query.Select(t => new TecnicoDto
         {
             IdPersonal = t.IdPersonal,
             NombreApellido = t.NombreApellido,
             Especialidad = t.Especialidad,
-            TurnoDescripcion = t.Turno.DescripcionTurno
+            IdTurno = t.IdTurno,
+            TurnoDescripcion = t.Turno.DescripcionTurno,
+            Activo = t.Activo
         });
     }
 
     public async Task<IEnumerable<Tecnico>> GetAllAsync()
     {
-        return await _repository.GetAllAsync();
+        var tecnicos = await _repository.GetAllAsync();
+        return tecnicos.Where(t => t.Activo);
     }
 
     public async Task<Tecnico?> GetByIdAsync(int id)
@@ -50,12 +59,13 @@ public class TecnicoService : ITecnicoService
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task ToggleStatusAsync(int id)
     {
         var tecnico = await _repository.GetByIdAsync(id);
         if (tecnico != null)
         {
-            _repository.Remove(tecnico);
+            tecnico.Activo = !tecnico.Activo;
+            _repository.Update(tecnico);
             await _context.SaveChangesAsync();
         }
     }

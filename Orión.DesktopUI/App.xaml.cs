@@ -32,7 +32,10 @@ public partial class App : System.Windows.Application
             {
                 // Persistencia
                 services.AddDbContext<OrionDbContext>(options =>
-                    options.UseNpgsql("Host=localhost;Port=5433;Database=DB_Orion;Username=admin;Password=Mast3rC0mput0;CommandTimeout=30;Trust Server Certificate=true"));
+                {
+                    options.UseNpgsql("Host=localhost;Port=5433;Database=DB_Orion;Username=admin;Password=Mast3rC0mput0;CommandTimeout=30;Trust Server Certificate=true");
+                    options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+                });
                 
                 services.AddScoped<IOrionDbContext>(provider => provider.GetRequiredService<OrionDbContext>());
 
@@ -40,10 +43,12 @@ public partial class App : System.Windows.Application
                 services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
                 // Servicios de Aplicación
+                services.AddSingleton<IUserSessionService, UserSessionService>();
                 services.AddScoped<IAuthService, AuthService>();
                 services.AddScoped<IMaquinariaService, MaquinariaService>();
                 services.AddScoped<IComponenteService, ComponenteService>();
                 services.AddScoped<ITecnicoService, TecnicoService>();
+                services.AddScoped<IUsuarioService, UsuarioService>();
                 services.AddScoped<ISolicitudServicioService, SolicitudServicioService>();
                 services.AddScoped<IReportService, ReportService>();
                 services.AddScoped<IDashboardService, DashboardService>();
@@ -54,6 +59,7 @@ public partial class App : System.Windows.Application
                 services.AddTransient<MaquinariaViewModel>();
                 services.AddTransient<ComponenteViewModel>();
                 services.AddTransient<TecnicoViewModel>();
+                services.AddTransient<UsuarioViewModel>();
                 services.AddTransient<SolicitudViewModel>();
                 services.AddTransient<DashboardViewModel>();
 
@@ -64,6 +70,7 @@ public partial class App : System.Windows.Application
                 services.AddTransient<MaquinariaListView>();
                 services.AddTransient<ComponenteListView>();
                 services.AddTransient<TecnicoListView>();
+                services.AddTransient<UsuarioListView>();
                 services.AddTransient<SolicitudListView>();
             })
             .Build();
@@ -71,6 +78,10 @@ public partial class App : System.Windows.Application
         // Suscribirse al mensaje de login
         WeakReferenceMessenger.Default.Register<LoginSuccessMessage>(this, (r, m) =>
         {
+            // Guardar usuario en la sesión
+            var session = _host.Services.GetRequiredService<IUserSessionService>();
+            session.CurrentUser = m.User;
+
             var mainView = _host.Services.GetRequiredService<MainView>();
             mainView.Show();
             _loginView?.Close();

@@ -1,4 +1,4 @@
-<UserControl x:Class="Orión.DesktopUI.Views.TecnicoListView"
+<UserControl x:Class="Orión.DesktopUI.Views.UsuarioListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -16,16 +16,14 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-            <TextBlock Text="GESTIÓN DE PERSONAL TÉCNICO" Style="{StaticResource MaterialDesignHeadline5TextBlock}" VerticalAlignment="Center"/>
-            <Button Command="{Binding LoadTecnicosCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
+            <TextBlock Text="ADMINISTRACIÓN DE USUARIOS" Style="{StaticResource MaterialDesignHeadline5TextBlock}" VerticalAlignment="Center"/>
+            <Button Command="{Binding LoadUsuariosCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
                 <materialDesign:PackIcon Kind="Refresh"/>
             </Button>
-            <Button Command="{Binding CreateTecnicoCommand}" 
-                    Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0" ToolTip="Registrar Nuevo Técnico">
+            <Button Command="{Binding CreateUsuarioCommand}" Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="AccountPlus" Margin="0,0,8,0"/>
-                    <TextBlock Text="NUEVO"/>
+                    <TextBlock Text="NUEVO USUARIO"/>
                 </StackPanel>
             </Button>
         </StackPanel>
@@ -33,46 +31,44 @@
         <ProgressBar Grid.Row="1" IsIndeterminate="True" VerticalAlignment="Top" 
                      Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Tecnicos}" SelectedItem="{Binding SelectedTecnico}" 
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Usuarios}" SelectedItem="{Binding SelectedUsuario}" 
                   AutoGenerateColumns="False" IsReadOnly="True"
-                  Style="{StaticResource MaterialDesignDataGrid}"
-                  materialDesign:DataGridAssist.CellPadding="13 8 8 8"
-                  materialDesign:DataGridAssist.ColumnHeaderPadding="8">
+                  Style="{StaticResource MaterialDesignDataGrid}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID PERSONAL" Binding="{Binding IdPersonal}"/>
-                <DataGridTextColumn Header="NOMBRE Y APELLIDO" Binding="{Binding NombreApellido}" Width="*"/>
-                <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}"/>
-                <DataGridTextColumn Header="TURNO ASIGNADO" Binding="{Binding TurnoDescripcion}"/>
-                <DataGridTextColumn Header="ESTADO" Binding="{Binding Activo, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Estado'}">
+                <DataGridTextColumn Header="USUARIO" Binding="{Binding NombreUsuario}" Width="*"/>
+                <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="*"/>
+                <DataGridTextColumn Header="ROL" Binding="{Binding Rol}"/>
+                <DataGridTextColumn Header="FECHA CREACIÓN" Binding="{Binding FechaCreacion, StringFormat=d}"/>
+                <DataGridTextColumn Header="ESTADO" Binding="{Binding Activo}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="Text" Value="Activo"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Activo}" Value="False">
-                                    <Setter Property="Text" Value="Inactivo"/>
+                                    <Setter Property="Text" Value="Bloqueado"/>
                                     <Setter Property="Foreground" Value="Red"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTemplateColumn Header="ACCIONES" Visibility="{Binding DataContext.IsAdmin, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <DataGridTemplateColumn Header="ACCIONES">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Button Command="{Binding DataContext.EditTecnicoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                <Button Command="{Binding DataContext.EditUsuarioCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                         Style="{StaticResource MaterialDesignIconButton}" ToolTip="Editar">
                                     <materialDesign:PackIcon Kind="Edit"/>
                                 </Button>
                                 <Button Command="{Binding DataContext.ToggleStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Cambiar Estado">
-                                    <materialDesign:PackIcon Kind="{Binding Activo, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Icon'}">
+                                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Bloquear/Desbloquear">
+                                    <materialDesign:PackIcon>
                                         <materialDesign:PackIcon.Style>
                                             <Style TargetType="materialDesign:PackIcon">
-                                                <Setter Property="Kind" Value="Delete"/>
+                                                <Setter Property="Kind" Value="AccountOff"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Activo}" Value="False">
-                                                        <Setter Property="Kind" Value="Restore"/>
+                                                        <Setter Property="Kind" Value="AccountCheck"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
