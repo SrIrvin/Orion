@@ -21,7 +21,7 @@
                 
                 <TextBlock Text="INICIAR SESIÓN" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" 
                            HorizontalAlignment="Center" Margin="0,0,0,32" Foreground="{StaticResource TextSecondaryBrush}"
-                           FontWeight="SemiBold" LetterSpacing="2"/>
+                           FontWeight="SemiBold"/>
                 
                 <TextBox materialDesign:HintAssist.Hint="Nombre de Usuario" 
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"

@@ -31,7 +31,7 @@
                             <Image Source="../Assets/Icono.PNG" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </materialDesign:Card>
                         <TextBlock Text="ORIÓN" HorizontalAlignment="Center" Margin="0,16,0,0" 
-                                   FontSize="28" FontWeight="Black" Foreground="White" LetterSpacing="4"/>
+                                   FontSize="28" FontWeight="Black" Foreground="White"/>
                         <TextBlock Text="GESTOR DE MANTENIMIENTO" HorizontalAlignment="Center" 
                                    FontSize="11" Foreground="#A0A8AE" FontWeight="SemiBold" Opacity="0.8"/>
                     </StackPanel>
