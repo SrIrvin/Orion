@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Orión.Application.Interfaces;
 using Orión.Domain.Entities;
+using Orión.Domain.Exceptions;
 using BC = BCrypt.Net.BCrypt;
 
 namespace Orión.Application.Services;
@@ -32,7 +33,7 @@ public class AuthService : IAuthService
         // Verificar si el usuario ya existe
         if (await _context.Usuarios.AnyAsync(u => u.NombreUsuario == username))
         {
-            throw new Exception("El nombre de usuario ya está en uso.");
+            throw new UserAlreadyExistsException(username);
         }
 
         var usuario = new Usuario
