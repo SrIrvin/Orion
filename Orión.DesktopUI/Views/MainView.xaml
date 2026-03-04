@@ -16,99 +16,139 @@
     <materialDesign:DialogHost Identifier="MainDialogHost" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}">
         <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
             <materialDesign:DrawerHost.LeftDrawerContent>
-                <DockPanel Width="270">
-                    <DockPanel.Background>
+                <Grid Width="280">
+                    <Grid.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#003153" Offset="0"/>
-                            <GradientStop Color="#004B75" Offset="1"/>
+                            <GradientStop Color="#00243A" Offset="0"/>
+                            <GradientStop Color="#003153" Offset="1"/>
                         </LinearGradientBrush>
-                    </DockPanel.Background>
+                    </Grid.Background>
                     
-                    <StackPanel DockPanel.Dock="Top" Margin="0,32,0,40">
-                        <materialDesign:Card Width="100" Height="100" UniformCornerRadius="50" 
-                                             Padding="0" Background="White" materialDesign:ElevationAssist.Elevation="Dp4"
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Header -->
+                        <RowDefinition Height="*"/>    <!-- Menu -->
+                        <RowDefinition Height="Auto"/> <!-- Settings -->
+                        <RowDefinition Height="Auto"/> <!-- Footer -->
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADER -->
+                    <StackPanel Grid.Row="0" Margin="0,40,0,40">
+                        <materialDesign:Card Width="90" Height="90" UniformCornerRadius="45" 
+                                             Padding="0" Background="White" materialDesign:ElevationAssist.Elevation="Dp3"
                                              HorizontalAlignment="Center">
-                            <Image Source="../Assets/Icono.PNG" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Image Source="../Assets/Icono.PNG" Width="60" Height="60" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </materialDesign:Card>
                         <TextBlock Text="ORIÓN" HorizontalAlignment="Center" Margin="0,16,0,0" 
-                                   FontSize="28" FontWeight="Black" Foreground="White"/>
-                        <TextBlock Text="GESTOR DE MANTENIMIENTO" HorizontalAlignment="Center" 
-                                   FontSize="11" Foreground="#A0A8AE" FontWeight="SemiBold" Opacity="0.8"/>
+                                   FontSize="24" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="SISTEMA DE GESTIÓN" HorizontalAlignment="Center" 
+                                   FontSize="10" Foreground="#A0A8AE" FontWeight="Light" Opacity="0.7"/>
                     </StackPanel>
                     
-                    <ListBox x:Name="DrawerListBox" Margin="0" 
+                    <!-- MAIN MENU -->
+                    <ListBox Grid.Row="1" x:Name="DrawerListBox" Margin="0" 
                              SelectedIndex="0"
                              ItemContainerStyle="{StaticResource MaterialDesignNavigationListBoxItem}"
                              Style="{StaticResource MaterialDesignNavigationPrimaryListBox}"
                              Background="Transparent">
-                        <ListBoxItem Foreground="White" Height="50">
+                        
+                        <ListBoxItem Foreground="White" Height="48">
                             <ListBoxItem.InputBindings>
                                 <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToDashboardCommand}"/>
                             </ListBoxItem.InputBindings>
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ViewDashboard" Margin="24,0,20,0" VerticalAlignment="Center" Width="22" Height="22"/>
-                                <TextBlock Text="Dashboard" VerticalAlignment="Center" FontSize="16" FontWeight="Medium"/>
+                                <materialDesign:PackIcon Kind="ViewDashboard" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
+                                <TextBlock Text="Dashboard" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
                             </StackPanel>
                         </ListBoxItem>
                         
-                        <ListBoxItem Foreground="White" Height="50">
+                        <ListBoxItem Foreground="White" Height="48">
                             <ListBoxItem.InputBindings>
                                 <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToMaquinariaCommand}"/>
                             </ListBoxItem.InputBindings>
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Engine" Margin="24,0,20,0" VerticalAlignment="Center" Width="22" Height="22"/>
-                                <TextBlock Text="Maquinaria" VerticalAlignment="Center" FontSize="16" FontWeight="Medium"/>
+                                <materialDesign:PackIcon Kind="Engine" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
+                                <TextBlock Text="Maquinaria" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
                             </StackPanel>
                         </ListBoxItem>
 
-                        <ListBoxItem Foreground="White" Height="50">
+                        <ListBoxItem Foreground="White" Height="48">
                             <ListBoxItem.InputBindings>
                                 <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToTecnicosCommand}"/>
                             </ListBoxItem.InputBindings>
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="AccountGroup" Margin="24,0,20,0" VerticalAlignment="Center" Width="22" Height="22"/>
-                                <TextBlock Text="Personal" VerticalAlignment="Center" FontSize="16" FontWeight="Medium"/>
+                                <materialDesign:PackIcon Kind="AccountGroup" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
+                                <TextBlock Text="Personal" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
                             </StackPanel>
                         </ListBoxItem>
 
-                        <ListBoxItem Foreground="White" Height="50">
+                        <ListBoxItem Foreground="White" Height="48">
                             <ListBoxItem.InputBindings>
                                 <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToSolicitudesCommand}"/>
                             </ListBoxItem.InputBindings>
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="HammerWrench" Margin="24,0,20,0" VerticalAlignment="Center" Width="22" Height="22"/>
-                                <TextBlock Text="Solicitudes" VerticalAlignment="Center" FontSize="16" FontWeight="Medium"/>
+                                <materialDesign:PackIcon Kind="HammerWrench" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
+                                <TextBlock Text="Solicitudes" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
                             </StackPanel>
                         </ListBoxItem>
 
-                        <ListBoxItem Foreground="White" Height="50">
+                        <ListBoxItem Foreground="White" Height="48">
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="FileDocument" Margin="24,0,20,0" VerticalAlignment="Center" Width="22" Height="22"/>
-                                <TextBlock Text="Reportes" VerticalAlignment="Center" FontSize="16" FontWeight="Medium"/>
+                                <materialDesign:PackIcon Kind="FileDocument" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
+                                <TextBlock Text="Reportes" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
                             </StackPanel>
                         </ListBoxItem>
                         
-                        <ListBoxItem Foreground="White" Height="50" Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ListBoxItem Foreground="White" Height="48" Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ListBoxItem.InputBindings>
                                 <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToUsuariosCommand}"/>
                             </ListBoxItem.InputBindings>
                             <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="ShieldAccount" Margin="24,0,20,0" VerticalAlignment="Center" Width="22" Height="22"/>
-                                <TextBlock Text="Usuarios" VerticalAlignment="Center" FontSize="16" FontWeight="Medium"/>
+                                <materialDesign:PackIcon Kind="ShieldAccount" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
+                                <TextBlock Text="Usuarios" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
                             </StackPanel>
                         </ListBoxItem>
                     </ListBox>
 
-                    <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="0,0,0,24">
-                        <Separator Background="White" Margin="24,0,24,20" Opacity="0.2"/>
-                        <ListBoxItem Foreground="White" Height="50">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Settings" Margin="24,0,20,0" VerticalAlignment="Center" Width="22" Height="22"/>
-                                <TextBlock Text="Configuración" VerticalAlignment="Center" FontSize="16" FontWeight="Medium"/>
-                            </StackPanel>
-                        </ListBoxItem>
+                    <!-- SETTINGS SECTION -->
+                    <StackPanel Grid.Row="2" Margin="0,0,0,16">
+                        <Separator Background="White" Margin="20,0,20,8" Opacity="0.15"/>
+                        <ListBox ItemContainerStyle="{StaticResource MaterialDesignNavigationListBoxItem}"
+                                 Style="{StaticResource MaterialDesignNavigationPrimaryListBox}"
+                                 Background="Transparent">
+                            <ListBoxItem Foreground="White" Height="48">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="SettingsOutline" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
+                                    <TextBlock Text="Configuración" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
+                                </StackPanel>
+                            </ListBoxItem>
+                        </ListBox>
                     </StackPanel>
-                </DockPanel>
+
+                    <!-- DEVELOPER FOOTER -->
+                    <Border Grid.Row="3" Background="#1A000000" Padding="24,20" BorderThickness="0,1,0,0" BorderBrush="#1AFFFFFF">
+                        <StackPanel Opacity="0.8">
+                            <TextBlock Text="DESARROLLO POR" FontSize="10" FontWeight="Bold" Foreground="#8A9BA8" Margin="0,0,0,12"/>
+                            
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon Kind="EmailOutline" Width="16" Height="16" Foreground="White" Opacity="0.7"/>
+                                <TextBlock Grid.Column="1" Text="sr._irvin@hotmail.com" FontSize="11" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon Kind="Linkedin" Width="16" Height="16" Foreground="White" Opacity="0.7"/>
+                                <TextBlock Grid.Column="1" Text="linkedin.com/in/sr-irvin" FontSize="11" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </materialDesign:DrawerHost.LeftDrawerContent>
 
             <DockPanel Background="{StaticResource BackgroundBrush}">
