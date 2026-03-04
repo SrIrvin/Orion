@@ -9,8 +9,10 @@ public static class StagingSeedData
 {
     public static void Seed(OrionDbContext context)
     {
+        var todasLasMaquinas = context.Maquinarias.ToList();
+
         // 1. Generar Maquinaria Masiva (20 equipos adicionales)
-        if (context.Maquinarias.Count() < 5)
+        if (todasLasMaquinas.Count < 5)
         {
             var ubicacionId = context.Ubicaciones.First().IdUbicacion;
             for (int i = 3; i <= 22; i++)
@@ -29,6 +31,7 @@ public static class StagingSeedData
                 });
             }
             context.SaveChanges();
+            todasLasMaquinas = context.Maquinarias.ToList(); // Recargar después de añadir
         }
 
         // 2. Generar Técnicos Adicionales
@@ -52,20 +55,56 @@ public static class StagingSeedData
         // 3. Generar Solicitudes de Servicio (Historial masivo)
         if (!context.SolicitudesServicios.Any())
         {
-            var maquinas = context.Maquinarias.Take(10).ToList();
+            var maquinasParaSolicitudes = todasLasMaquinas.Take(10).ToList();
             var tecnicos = context.Tecnicos.ToList();
 
             for (int i = 1; i <= 30; i++)
             {
                 context.SolicitudesServicios.Add(new SolicitudServicio
                 {
-                    IdMaquinaria = maquinas[i % maquinas.Count].IdMaquinaria,
+                    IdMaquinaria = maquinasParaSolicitudes[i % maquinasParaSolicitudes.Count].IdMaquinaria,
                     IdTipoMantto = 1,
                     DescripcionFalla = $"Falla técnica detectada en ciclo de prueba STG-{i}",
                     FechaApertura = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(-i), DateTimeKind.Utc),
                     IdPersonal = tecnicos[i % tecnicos.Count].IdPersonal,
                     IdEstadoSolicitud = 1
                 });
+            }
+            context.SaveChanges();
+        }
+
+        // 4. Generar Componentes (Asegurar que TODAS las máquinas tengan al menos uno)
+        var tipos = context.TiposComponentes.ToList();
+        var estados = context.EstadosComponentes.ToList();
+
+        if (tipos.Any() && estados.Any())
+        {
+            int compCounter = 1;
+            foreach (var maq in todasLasMaquinas)
+            {
+                // Solo agregar si la máquina no tiene componentes asignados
+                if (!context.Componentes.Any(c => c.IdMaquinaria == maq.IdMaquinaria))
+                {
+                    int numComp = (compCounter % 3) + 1; // 1 a 3 componentes por máquina
+                    for (int i = 1; i <= numComp; i++)
+                    {
+                        var tipo = tipos[(compCounter + i) % tipos.Count];
+                        context.Componentes.Add(new Componente
+                        {
+                            IdComponente = $"C-{maq.IdMaquinaria}-{i:D2}",
+                            IdMaquinaria = maq.IdMaquinaria,
+                            NombreComponente = $"{tipo.NombreTipo} {i}",
+                            IdTipoComponente = tipo.IdTipoComponente,
+                            Marca = "OEM-Parts",
+                            NumeroSerie = $"SN-{maq.IdMaquinaria}-{i * 1000}",
+                            EspecificacionesTecnicas = $"Especificaciones técnicas del componente {compCounter}",
+                            FechaUltimoCambio = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(-i * 15), DateTimeKind.Utc),
+                            IdEstado = estados[i % estados.Count].IdEstado,
+                            Activo = true
+                        });
+                    }
+                    compCounter++;
+                }
             }
             context.SaveChanges();
         }
