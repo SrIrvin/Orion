@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Orión.Application.Interfaces;
 using Orión.DesktopUI.Views;
+using System.Diagnostics;
 
 namespace Orión.DesktopUI.ViewModels;
 
@@ -67,5 +68,17 @@ public partial class MainViewModel : ObservableObject
             vm.MaquinariaId = maquinariaId;
         }
         CurrentView = view;
+    }
+
+    [RelayCommand]
+    private void OpenEmail()
+    {
+        Process.Start(new ProcessStartInfo("mailto:sr._irvin@hotmail.com") { UseShellExecute = true });
+    }
+
+    [RelayCommand]
+    private void OpenLinkedIn()
+    {
+        Process.Start(new ProcessStartInfo("https://www.linkedin.com/in/sr-irvin/") { UseShellExecute = true });
     }
 }

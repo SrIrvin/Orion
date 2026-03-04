@@ -34,7 +34,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\Icono.ico" />
-    <Resource Include="Assets\Logo.jpg" />
+    <Resource Include="Assets\Icono.PNG" />
   </ItemGroup>
 
 </Project>

@@ -13,11 +13,11 @@
                              UniformCornerRadius="12" materialDesign:ElevationAssist.Elevation="Dp12"
                              Background="White">
             <StackPanel>
-                <Image Source="../Assets/Logo.jpg" Width="200" Margin="0,0,0,24" HorizontalAlignment="Center">
-                    <Image.Effect>
-                        <DropShadowEffect BlurRadius="10" Color="Gray" Opacity="0.3" ShadowDepth="2"/>
-                    </Image.Effect>
-                </Image>
+                <materialDesign:Card Width="120" Height="120" UniformCornerRadius="60" 
+                                     Padding="0" Background="White" materialDesign:ElevationAssist.Elevation="Dp6"
+                                     HorizontalAlignment="Center" Margin="0,0,0,32">
+                    <Image Source="../Assets/Icono.PNG" Width="85" Height="85" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </materialDesign:Card>
                 
                 <TextBlock Text="INICIAR SESIÓN" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" 
                            HorizontalAlignment="Center" Margin="0,0,0,32" Foreground="{StaticResource TextSecondaryBrush}"
