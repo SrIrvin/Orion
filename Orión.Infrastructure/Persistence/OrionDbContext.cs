@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Orión.Application.Interfaces;
 using Orión.Domain.Entities;
 
 namespace Orión.Infrastructure.Persistence;
 
-public class OrionDbContext : DbContext
+public class OrionDbContext : DbContext, IOrionDbContext
 {
     public OrionDbContext() { }
 
@@ -20,14 +21,13 @@ public class OrionDbContext : DbContext
     public DbSet<SolicitudServicio> SolicitudesServicios { get; set; } = null!;
     public DbSet<TipoMantenimiento> TiposMantenimiento { get; set; } = null!;
     public DbSet<EstadoSolicitud> EstadosSolicitudes { get; set; } = null!;
+    public DbSet<Usuario> Usuarios { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            // Nota: Esta cadena de conexión es para migraciones desde CLI.
-            // Para ejecución normal se debe proveer desde App.xaml.cs o appsettings.json
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=DB_Orion;Username=admin;Password=Mast3rC0mput0");
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=DB_Orion;Username=admin;Password=Mast3rC0mput0;CommandTimeout=30;Trust Server Certificate=true");
         }
     }
 
@@ -208,6 +208,22 @@ public class OrionDbContext : DbContext
                 .WithMany(p => p.SolicitudesServicio)
                 .HasForeignKey(d => d.IdEstadoSolicitud)
                 .HasConstraintName("FK_Solicitud_EstadoSolicitud");
+        });
+
+        // 12. Usuario
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.ToTable("Usuario");
+            entity.HasKey(e => e.IdUsuario);
+            entity.Property(e => e.IdUsuario).HasColumnName("ID_Usuario").UseSerialColumn();
+            entity.Property(e => e.NombreUsuario).HasColumnName("Nombre_Usuario").HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PasswordHash).HasColumnName("Password_Hash").IsRequired();
+            entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(100);
+            entity.Property(e => e.Rol).HasColumnName("Rol").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.FechaCreacion).HasColumnName("Fecha_Creacion").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.Activo).HasColumnName("Activo").HasDefaultValue(true);
+
+            entity.HasIndex(e => e.NombreUsuario).IsUnique();
         });
 
         // =====================================================
