@@ -9,6 +9,9 @@ public class ComponenteDto
     public string? EspecificacionesTecnicas { get; set; }
     public DateTime? FechaUltimoCambio { get; set; }
     public string IdMaquinaria { get; set; } = string.Empty;
+    public int IdTipoComponente { get; set; }
     public string TipoComponenteNombre { get; set; } = string.Empty;
+    public int IdEstado { get; set; }
     public string EstadoDescripcion { get; set; } = string.Empty;
+    public bool Activo { get; set; } = true;
 }

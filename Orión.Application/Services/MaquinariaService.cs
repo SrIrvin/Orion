@@ -15,13 +15,19 @@ public class MaquinariaService : IMaquinariaService
         _context = context;
     }
 
-    public async Task<IEnumerable<MaquinariaDto>> GetAllDtoAsync()
+    public async Task<IEnumerable<MaquinariaDto>> GetAllDtoAsync(bool includeInactive = false)
     {
         var maquinas = await _repository.GetAllWithIncludesAsync(
             m => m.NivelCritico,
             m => m.Ubicacion);
 
-        return maquinas.Select(m => new MaquinariaDto
+        var query = maquinas.AsEnumerable();
+        if (!includeInactive)
+        {
+            query = query.Where(m => m.Activo);
+        }
+
+        return query.Select(m => new MaquinariaDto
         {
             IdMaquinaria = m.IdMaquinaria,
             NombreMaquina = m.NombreMaquina,
@@ -29,14 +35,18 @@ public class MaquinariaService : IMaquinariaService
             Marca = m.Marca,
             Modelo = m.Modelo,
             FechaInstalacion = m.FechaInstalacion,
+            IdNivelCritico = m.IdNivelCritico,
             NivelCriticoDescripcion = m.NivelCritico.Descripcion,
-            UbicacionNave = $"Nave {m.Ubicacion.NumeroNave}"
+            IdUbicacion = m.IdUbicacion,
+            UbicacionNave = $"Nave {m.Ubicacion.NumeroNave}",
+            Activo = m.Activo
         });
     }
 
     public async Task<IEnumerable<Maquinaria>> GetAllAsync()
     {
-        return await _repository.GetAllAsync();
+        var data = await _repository.GetAllAsync();
+        return data.Where(m => m.Activo);
     }
 
     public async Task<Maquinaria?> GetByIdAsync(string id)
@@ -56,12 +66,13 @@ public class MaquinariaService : IMaquinariaService
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task ToggleStatusAsync(string id)
     {
         var maquinaria = await _repository.GetByIdAsync(id);
         if (maquinaria != null)
         {
-            _repository.Remove(maquinaria);
+            maquinaria.Activo = !maquinaria.Activo;
+            _repository.Update(maquinaria);
             await _context.SaveChangesAsync();
         }
     }

@@ -1,0 +1,82 @@
+<UserControl x:Class="Orión.DesktopUI.Views.MaquinariaEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             Width="450">
+    <Border Background="{DynamicResource MaterialDesignPaper}" 
+            CornerRadius="8" 
+            Padding="24"
+            materialDesign:ElevationAssist.Elevation="Dp8">
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,24"/>
+            
+            <TextBox materialDesign:HintAssist.Hint="Código Maquinaria" 
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding IdMaquinaria, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding IsNew}"
+                     Margin="0,0,0,16"/>
+
+            <TextBox materialDesign:HintAssist.Hint="Nombre de la Máquina" 
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding NombreMaquina, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,16"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" materialDesign:HintAssist.Hint="Tipo" 
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Text="{Binding Tipo, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Column="2" materialDesign:HintAssist.Hint="Marca" 
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Text="{Binding Marca, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+
+            <TextBox materialDesign:HintAssist.Hint="Modelo" 
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding Modelo, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,16,0,16"/>
+
+            <DatePicker materialDesign:HintAssist.Hint="Fecha de Instalación" 
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"
+                        SelectedDate="{Binding FechaInstalacion}"
+                        Margin="0,0,0,16"/>
+
+            <ComboBox materialDesign:HintAssist.Hint="Nivel de Criticidad"
+                      Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                      ItemsSource="{Binding NivelesCriticos}"
+                      DisplayMemberPath="Descripcion"
+                      SelectedValuePath="IdNivelCritico"
+                      SelectedValue="{Binding IdNivelCritico}"
+                      Margin="0,0,0,16"/>
+
+            <ComboBox materialDesign:HintAssist.Hint="Ubicación (Nave)"
+                      Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                      ItemsSource="{Binding Ubicaciones}"
+                      DisplayMemberPath="NumeroNave"
+                      SelectedValuePath="IdUbicacion"
+                      SelectedValue="{Binding IdUbicacion}"
+                      Margin="0,0,0,24"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Content="CANCELAR"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                    <Button.CommandParameter>
+                        <Binding RelativeSource="{RelativeSource Self}" />
+                    </Button.CommandParameter>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                        Content="GUARDAR"
+                        Command="{Binding SaveCommand}"
+                        Margin="8,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

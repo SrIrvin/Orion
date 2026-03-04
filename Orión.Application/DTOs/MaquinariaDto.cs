@@ -8,6 +8,9 @@ public class MaquinariaDto
     public string? Marca { get; set; }
     public string? Modelo { get; set; }
     public DateTime? FechaInstalacion { get; set; }
+    public int IdNivelCritico { get; set; }
     public string NivelCriticoDescripcion { get; set; } = string.Empty;
+    public int IdUbicacion { get; set; }
     public string UbicacionNave { get; set; } = string.Empty;
+    public bool Activo { get; set; } = true;
 }

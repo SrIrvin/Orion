@@ -15,14 +15,20 @@ public class ComponenteService : IComponenteService
         _context = context;
     }
 
-    public async Task<IEnumerable<ComponenteDto>> GetByMaquinariaIdDtoAsync(string maquinariaId)
+    public async Task<IEnumerable<ComponenteDto>> GetByMaquinariaIdDtoAsync(string maquinariaId, bool includeInactive = false)
     {
         var componentes = await _repository.GetWithIncludesAsync(
             c => c.IdMaquinaria == maquinariaId,
             c => c.TipoComponente,
             c => c.EstadoComponente);
 
-        return componentes.Select(c => new ComponenteDto
+        var query = componentes.AsEnumerable();
+        if (!includeInactive)
+        {
+            query = query.Where(c => c.Activo);
+        }
+
+        return query.Select(c => new ComponenteDto
         {
             IdComponente = c.IdComponente,
             NombreComponente = c.NombreComponente,
@@ -31,14 +37,18 @@ public class ComponenteService : IComponenteService
             EspecificacionesTecnicas = c.EspecificacionesTecnicas,
             FechaUltimoCambio = c.FechaUltimoCambio,
             IdMaquinaria = c.IdMaquinaria,
+            IdTipoComponente = c.IdTipoComponente,
             TipoComponenteNombre = c.TipoComponente.NombreTipo,
-            EstadoDescripcion = c.EstadoComponente.DescripcionEstado
+            IdEstado = c.IdEstado,
+            EstadoDescripcion = c.EstadoComponente.DescripcionEstado,
+            Activo = c.Activo
         });
     }
 
     public async Task<IEnumerable<Componente>> GetByMaquinariaIdAsync(string maquinariaId)
     {
-        return await _repository.FindAsync(c => c.IdMaquinaria == maquinariaId);
+        var data = await _repository.FindAsync(c => c.IdMaquinaria == maquinariaId);
+        return data.Where(c => c.Activo);
     }
 
     public async Task<Componente?> GetByIdAsync(string id)
@@ -58,12 +68,13 @@ public class ComponenteService : IComponenteService
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task ToggleStatusAsync(string id)
     {
         var componente = await _repository.GetByIdAsync(id);
         if (componente != null)
         {
-            _repository.Remove(componente);
+            componente.Activo = !componente.Activo;
+            _repository.Update(componente);
             await _context.SaveChangesAsync();
         }
     }

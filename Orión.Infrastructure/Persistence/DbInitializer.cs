@@ -13,6 +13,8 @@ public static class DbInitializer
 
         // 0. Asegurar esquema actualizado (Hack para desarrollo sin migraciones manuales)
         context.Database.ExecuteSqlRaw("ALTER TABLE \"Tecnico\" ADD COLUMN IF NOT EXISTS \"Activo\" BOOLEAN DEFAULT TRUE;");
+        context.Database.ExecuteSqlRaw("ALTER TABLE \"Maquinaria\" ADD COLUMN IF NOT EXISTS \"Activo\" BOOLEAN DEFAULT TRUE;");
+        context.Database.ExecuteSqlRaw("ALTER TABLE \"Componente\" ADD COLUMN IF NOT EXISTS \"Activo\" BOOLEAN DEFAULT TRUE;");
 
         // 1. Crear usuarios por defecto
         if (!context.Usuarios.Any(u => u.NombreUsuario == "admin"))

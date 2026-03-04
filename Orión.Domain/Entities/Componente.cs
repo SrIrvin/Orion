@@ -8,6 +8,7 @@ public class Componente
     public string? NumeroSerie { get; set; }
     public string? EspecificacionesTecnicas { get; set; }
     public DateTime? FechaUltimoCambio { get; set; }
+    public bool Activo { get; set; } = true;
 
     // Foreign Keys
     public string IdMaquinaria { get; set; } = string.Empty;

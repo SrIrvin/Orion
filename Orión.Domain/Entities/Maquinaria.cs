@@ -8,6 +8,7 @@ public class Maquinaria
     public string? Marca { get; set; }
     public string? Modelo { get; set; }
     public DateTime? FechaInstalacion { get; set; }
+    public bool Activo { get; set; } = true;
     
     // Foreign Keys
     public int IdNivelCritico { get; set; }

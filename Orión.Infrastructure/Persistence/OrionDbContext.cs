@@ -117,6 +117,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
             entity.Property(e => e.FechaInstalacion).HasColumnName("Fecha_Instalacion");
             entity.Property(e => e.IdNivelCritico).HasColumnName("ID_NivelCritico");
             entity.Property(e => e.IdUbicacion).HasColumnName("ID_Ubicacion");
+            entity.Property(e => e.Activo).HasColumnName("Activo").HasDefaultValue(true);
 
             entity.HasOne(d => d.NivelCritico)
                 .WithMany(p => p.Maquinarias)
@@ -160,6 +161,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
             entity.Property(e => e.EspecificacionesTecnicas).HasColumnName("Especificaciones_Tecnicas").HasMaxLength(50);
             entity.Property(e => e.FechaUltimoCambio).HasColumnName("Fecha_Ultimo_Cambio");
             entity.Property(e => e.IdEstado).HasColumnName("ID_Estado");
+            entity.Property(e => e.Activo).HasColumnName("Activo").HasDefaultValue(true);
 
             entity.HasOne(d => d.Maquinaria)
                 .WithMany(p => p.Componentes)
