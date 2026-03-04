@@ -49,6 +49,9 @@
                     </ListBoxItem>
 
                     <ListBoxItem Foreground="White">
+                        <ListBoxItem.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToTecnicosCommand}"/>
+                        </ListBoxItem.InputBindings>
                         <StackPanel Orientation="Horizontal" Height="40">
                             <materialDesign:PackIcon Kind="AccountGroup" Margin="16,0,16,0" VerticalAlignment="Center" Width="24" Height="24"/>
                             <TextBlock Text="Personal" VerticalAlignment="Center" FontSize="15"/>

@@ -75,5 +75,16 @@ public static class DbInitializer
             
             context.SaveChanges();
         }
+
+        // 4. Datos de prueba para Personal Técnico
+        if (!context.Tecnicos.Any())
+        {
+            context.Tecnicos.AddRange(
+                new Tecnico { IdPersonal = 101, NombreApellido = "Sr. Juan Pérez", Especialidad = "Mecánico", IdTurno = 1 },
+                new Tecnico { IdPersonal = 102, NombreApellido = "Ing. Maria García", Especialidad = "Electrónica", IdTurno = 2 },
+                new Tecnico { IdPersonal = 103, NombreApellido = "Pedro López", Especialidad = "Soldador", IdTurno = 3 }
+            );
+            context.SaveChanges();
+        }
     }
 }

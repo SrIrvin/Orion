@@ -42,12 +42,14 @@ public partial class App : System.Windows.Application
                 services.AddScoped<IAuthService, AuthService>();
                 services.AddScoped<IMaquinariaService, MaquinariaService>();
                 services.AddScoped<IComponenteService, ComponenteService>();
+                services.AddScoped<ITecnicoService, TecnicoService>();
 
                 // ViewModels
                 services.AddTransient<LoginViewModel>();
                 services.AddTransient<MainViewModel>();
                 services.AddTransient<MaquinariaViewModel>();
                 services.AddTransient<ComponenteViewModel>();
+                services.AddTransient<TecnicoViewModel>();
 
                 // Views
                 services.AddTransient<LoginView>();
@@ -55,6 +57,7 @@ public partial class App : System.Windows.Application
                 services.AddTransient<DashboardView>();
                 services.AddTransient<MaquinariaListView>();
                 services.AddTransient<ComponenteListView>();
+                services.AddTransient<TecnicoListView>();
             })
             .Build();
 

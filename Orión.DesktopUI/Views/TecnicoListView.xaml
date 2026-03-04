@@ -1,0 +1,37 @@
+<UserControl x:Class="Orión.DesktopUI.Views.TecnicoListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <TextBlock Text="GESTIÓN DE PERSONAL TÉCNICO" Style="{StaticResource MaterialDesignHeadline5TextBlock}" VerticalAlignment="Center"/>
+            <Button Command="{Binding LoadTecnicosCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
+                <materialDesign:PackIcon Kind="Refresh"/>
+            </Button>
+        </StackPanel>
+
+        <ProgressBar Grid.Row="1" IsIndeterminate="True" VerticalAlignment="Top" 
+                     Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Tecnicos}" AutoGenerateColumns="False" IsReadOnly="True"
+                  Style="{StaticResource MaterialDesignDataGrid}"
+                  materialDesign:DataGridAssist.CellPadding="13 8 8 8"
+                  materialDesign:DataGridAssist.ColumnHeaderPadding="8">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID PERSONAL" Binding="{Binding IdPersonal}"/>
+                <DataGridTextColumn Header="NOMBRE Y APELLIDO" Binding="{Binding NombreApellido}" Width="*"/>
+                <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}"/>
+                <DataGridTextColumn Header="TURNO ASIGNADO" Binding="{Binding TurnoDescripcion}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
