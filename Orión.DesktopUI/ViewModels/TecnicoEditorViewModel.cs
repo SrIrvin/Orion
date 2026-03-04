@@ -83,7 +83,7 @@ public partial class TecnicoEditorViewModel : ObservableObject
 
             DialogHost.Close("MainDialogHost");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Manejo de errores simplificado
         }

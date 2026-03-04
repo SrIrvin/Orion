@@ -70,7 +70,7 @@ public partial class UsuarioEditorViewModel : ObservableObject
 
             DialogHost.Close("MainDialogHost");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Error handling logic would go here
         }

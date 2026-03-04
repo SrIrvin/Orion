@@ -101,7 +101,7 @@ public partial class MaquinariaEditorViewModel : ObservableObject
 
             DialogHost.Close("MainDialogHost");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

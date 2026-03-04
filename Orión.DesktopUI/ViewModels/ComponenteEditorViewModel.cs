@@ -105,7 +105,7 @@ public partial class ComponenteEditorViewModel : ObservableObject
 
             DialogHost.Close("MainDialogHost");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

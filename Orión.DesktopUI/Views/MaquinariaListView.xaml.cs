@@ -11,6 +11,6 @@ public partial class MaquinariaListView : UserControl
         DataContext = viewModel;
         
         // Cargar datos al iniciar
-        Loaded += async (s, e) => await viewModel.LoadMaquinasAsync();
+        Loaded += async (s, e) => await viewModel.LoadMaquinariasAsync();
     }
 }
