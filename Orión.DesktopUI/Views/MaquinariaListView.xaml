@@ -34,6 +34,16 @@
                 <DataGridTextColumn Header="CRITICIDAD" Binding="{Binding NivelCriticoDescripcion}"/>
                 <DataGridTextColumn Header="UBICACIÓN" Binding="{Binding UbicacionNave}"/>
                 <DataGridTextColumn Header="INSTALACIÓN" Binding="{Binding FechaInstalacion, StringFormat=d}"/>
+                
+                <DataGridTemplateColumn Header="ACCIONES">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="VER" Style="{StaticResource MaterialDesignFlatButton}" 
+                                    Command="{Binding DataContext.NavigateToComponentesCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding IdMaquinaria}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

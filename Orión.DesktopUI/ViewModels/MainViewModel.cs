@@ -29,4 +29,15 @@ public partial class MainViewModel : ObservableObject
     {
         CurrentView = _serviceProvider.GetRequiredService<MaquinariaListView>();
     }
+
+    [RelayCommand]
+    private void NavigateToComponentes(string maquinariaId)
+    {
+        var view = _serviceProvider.GetRequiredService<ComponenteListView>();
+        if (view.DataContext is ComponenteViewModel vm)
+        {
+            vm.MaquinariaId = maquinariaId;
+        }
+        CurrentView = view;
+    }
 }

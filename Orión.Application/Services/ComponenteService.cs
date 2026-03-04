@@ -1,3 +1,4 @@
+using Orión.Application.DTOs;
 using Orión.Application.Interfaces;
 using Orión.Domain.Entities;
 
@@ -12,6 +13,27 @@ public class ComponenteService : IComponenteService
     {
         _repository = repository;
         _context = context;
+    }
+
+    public async Task<IEnumerable<ComponenteDto>> GetByMaquinariaIdDtoAsync(string maquinariaId)
+    {
+        var componentes = await _repository.GetWithIncludesAsync(
+            c => c.IdMaquinaria == maquinariaId,
+            c => c.TipoComponente,
+            c => c.EstadoComponente);
+
+        return componentes.Select(c => new ComponenteDto
+        {
+            IdComponente = c.IdComponente,
+            NombreComponente = c.NombreComponente,
+            Marca = c.Marca,
+            NumeroSerie = c.NumeroSerie,
+            EspecificacionesTecnicas = c.EspecificacionesTecnicas,
+            FechaUltimoCambio = c.FechaUltimoCambio,
+            IdMaquinaria = c.IdMaquinaria,
+            TipoComponenteNombre = c.TipoComponente.NombreTipo,
+            EstadoDescripcion = c.EstadoComponente.DescripcionEstado
+        });
     }
 
     public async Task<IEnumerable<Componente>> GetByMaquinariaIdAsync(string maquinariaId)

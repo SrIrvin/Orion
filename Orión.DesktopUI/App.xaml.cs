@@ -40,12 +40,14 @@ public partial class App : System.Windows.Application
                 services.AddTransient<LoginViewModel>();
                 services.AddTransient<MainViewModel>();
                 services.AddTransient<MaquinariaViewModel>();
+                services.AddTransient<ComponenteViewModel>();
 
                 // Views
                 services.AddTransient<LoginView>();
                 services.AddTransient<MainView>();
                 services.AddTransient<DashboardView>();
                 services.AddTransient<MaquinariaListView>();
+                services.AddTransient<ComponenteListView>();
             })
             .Build();
 
