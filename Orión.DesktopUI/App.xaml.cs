@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,9 +17,15 @@ public partial class App : System.Windows.Application
 {
     private readonly IHost _host;
     private LoginView? _loginView;
+    private static readonly string LogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log.txt");
 
     public App()
     {
+        // 1. Configurar Handlers de Excepciones Globales
+        DispatcherUnhandledException += OnDispatcherUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnCurrentDomainUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
+
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
             {
@@ -60,6 +67,30 @@ public partial class App : System.Windows.Application
         });
     }
 
+    private void LogError(string source, Exception? ex)
+    {
+        var message = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{source}] ERROR: {ex?.Message}\nDetalles: {ex?.StackTrace}\nInner: {ex?.InnerException?.Message}\n\n";
+        File.AppendAllText(LogPath, message);
+        MessageBox.Show($"Ocurrió un error inesperado. Consulte el log para más detalles:\n\n{ex?.Message}", "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+
+    private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
+        LogError("UI Thread", e.Exception);
+        e.Handled = true;
+    }
+
+    private void OnCurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        LogError("AppDomain", e.ExceptionObject as Exception);
+    }
+
+    private void OnTaskSchedulerUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        LogError("TaskScheduler", e.Exception);
+        e.SetObserved();
+    }
+
     protected override void OnStartup(StartupEventArgs e)
     {
         try 
@@ -80,8 +111,7 @@ public partial class App : System.Windows.Application
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error crítico al iniciar la aplicación:\n\n{ex.Message}\n\nDetalles: {ex.InnerException?.Message}", 
-                            "Error de Inicio", MessageBoxButton.OK, MessageBoxImage.Error);
+            LogError("Startup", ex);
             Shutdown();
         }
     }
