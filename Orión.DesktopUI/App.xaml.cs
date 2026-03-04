@@ -2,17 +2,20 @@ using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using CommunityToolkit.Mvvm.Messaging;
 using Orión.Application.Interfaces;
 using Orión.Application.Services;
 using Orión.DesktopUI.ViewModels;
 using Orión.DesktopUI.Views;
 using Orión.Infrastructure.Persistence;
+using Orión.Infrastructure.Repositories;
 
 namespace Orión.DesktopUI;
 
 public partial class App : System.Windows.Application
 {
     private readonly IHost _host;
+    private LoginView? _loginView;
 
     public App()
     {
@@ -25,16 +28,34 @@ public partial class App : System.Windows.Application
                 
                 services.AddScoped<IOrionDbContext>(provider => provider.GetRequiredService<OrionDbContext>());
 
+                // Repositorios
+                services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+
                 // Servicios de Aplicación
                 services.AddScoped<IAuthService, AuthService>();
+                services.AddScoped<IMaquinariaService, MaquinariaService>();
+                services.AddScoped<IComponenteService, ComponenteService>();
 
                 // ViewModels
                 services.AddTransient<LoginViewModel>();
+                services.AddTransient<MainViewModel>();
+                services.AddTransient<MaquinariaViewModel>();
 
                 // Views
                 services.AddTransient<LoginView>();
+                services.AddTransient<MainView>();
+                services.AddTransient<DashboardView>();
+                services.AddTransient<MaquinariaListView>();
             })
             .Build();
+
+        // Suscribirse al mensaje de login
+        WeakReferenceMessenger.Default.Register<LoginSuccessMessage>(this, (r, m) =>
+        {
+            var mainView = _host.Services.GetRequiredService<MainView>();
+            mainView.Show();
+            _loginView?.Close();
+        });
     }
 
     protected override void OnStartup(StartupEventArgs e)
@@ -50,8 +71,8 @@ public partial class App : System.Windows.Application
                 DbInitializer.Initialize(context);
             }
 
-            var loginView = _host.Services.GetRequiredService<LoginView>();
-            loginView.Show();
+            _loginView = _host.Services.GetRequiredService<LoginView>();
+            _loginView.Show();
 
             base.OnStartup(e);
         }

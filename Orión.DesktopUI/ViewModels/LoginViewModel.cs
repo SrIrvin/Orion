@@ -1,9 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Orión.Application.Interfaces;
 using Orión.Domain.Entities;
 
 namespace Orión.DesktopUI.ViewModels;
+
+public record LoginSuccessMessage(Usuario User);
 
 public partial class LoginViewModel : ObservableObject
 {
@@ -44,8 +47,7 @@ public partial class LoginViewModel : ObservableObject
 
             if (user != null)
             {
-                // Aquí se manejaría la navegación al Dashboard
-                ErrorMessage = $"¡Bienvenido {user.NombreUsuario}!";
+                WeakReferenceMessenger.Default.Send(new LoginSuccessMessage(user));
             }
             else
             {

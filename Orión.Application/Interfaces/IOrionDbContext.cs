@@ -18,5 +18,6 @@ public interface IOrionDbContext
     DbSet<EstadoSolicitud> EstadosSolicitudes { get; set; }
     DbSet<Usuario> Usuarios { get; set; }
 
+    DbSet<TEntity> Set<TEntity>() where TEntity : class;
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

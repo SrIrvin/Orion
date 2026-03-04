@@ -6,9 +6,22 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
+                <ResourceDictionary Source="Resources/Brushes.xaml" />
+                <materialDesign:BundledTheme BaseTheme="Light" 
+                                             PrimaryColor="BlueGrey" 
+                                             SecondaryColor="Lime" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Overriding MD Brushes with Marina Moderna Palette -->
+            <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="{StaticResource PrimaryPrussianBlue}" />
+            <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="{StaticResource PrimaryPrussianBlueHover}" />
+            <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="{StaticResource PrimaryPrussianBluePressed}" />
+            <SolidColorBrush x:Key="SecondaryHueMidBrush" Color="{StaticResource SecondarySteelBlue}" />
+            <SolidColorBrush x:Key="MaterialDesignPaper" Color="{StaticResource BackgroundLight}" />
+            <SolidColorBrush x:Key="MaterialDesignCardBackground" Color="{StaticResource SurfaceWhite}" />
+            <SolidColorBrush x:Key="MaterialDesignBody" Color="{StaticResource TextPrimary}" />
+            <SolidColorBrush x:Key="MaterialDesignColumnHeader" Color="{StaticResource TextPrimary}" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

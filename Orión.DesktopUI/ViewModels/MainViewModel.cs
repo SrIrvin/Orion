@@ -1,0 +1,32 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
+using Orión.DesktopUI.Views;
+
+namespace Orión.DesktopUI.ViewModels;
+
+public partial class MainViewModel : ObservableObject
+{
+    private readonly IServiceProvider _serviceProvider;
+
+    [ObservableProperty]
+    private object? _currentView;
+
+    public MainViewModel(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+        _currentView = _serviceProvider.GetRequiredService<DashboardView>();
+    }
+
+    [RelayCommand]
+    private void NavigateToDashboard()
+    {
+        CurrentView = _serviceProvider.GetRequiredService<DashboardView>();
+    }
+
+    [RelayCommand]
+    private void NavigateToMaquinaria()
+    {
+        CurrentView = _serviceProvider.GetRequiredService<MaquinariaListView>();
+    }
+}
