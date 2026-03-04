@@ -8,7 +8,7 @@ using Orión.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace Orión.Infrastructure.Persistence.Migrations
+namespace Orión.Infrastructure.Migrations
 {
     [DbContext(typeof(OrionDbContext))]
     partial class OrionDbContextModelSnapshot : ModelSnapshot
@@ -28,6 +28,12 @@ namespace Orión.Infrastructure.Persistence.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("ID_Componente");
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("Activo");
 
                     b.Property<string>("EspecificacionesTecnicas")
                         .HasMaxLength(50)
@@ -175,6 +181,12 @@ namespace Orión.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(15)")
                         .HasColumnName("ID_Maquinaria");
 
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("Activo");
+
                     b.Property<DateTime?>("FechaInstalacion")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("Fecha_Instalacion");
@@ -318,6 +330,12 @@ namespace Orión.Infrastructure.Persistence.Migrations
                     b.Property<int>("IdPersonal")
                         .HasColumnType("integer")
                         .HasColumnName("ID_Personal");
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("Activo");
 
                     b.Property<string>("Especialidad")
                         .HasMaxLength(50)

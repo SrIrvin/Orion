@@ -12,6 +12,8 @@ using Orión.Infrastructure.Persistence;
 using Orión.Infrastructure.Repositories;
 using Orión.Infrastructure.Services;
 
+using Microsoft.Extensions.Configuration;
+
 namespace Orión.DesktopUI;
 
 public partial class App : System.Windows.Application
@@ -28,12 +30,22 @@ public partial class App : System.Windows.Application
         TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
 
         _host = Host.CreateDefaultBuilder()
+            .ConfigureAppConfiguration((context, builder) =>
+            {
+                builder.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
+                builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            })
             .ConfigureServices((context, services) =>
             {
+                var configuration = context.Configuration;
+                var environment = configuration.GetValue<string>("Environment") ?? "Development";
+                var connStringName = environment == "Staging" ? "StagingConnection" : "DefaultConnection";
+                var connString = configuration.GetConnectionString(connStringName);
+
                 // Persistencia
                 services.AddDbContext<OrionDbContext>(options =>
                 {
-                    options.UseNpgsql("Host=localhost;Port=5433;Database=DB_Orion;Username=admin;Password=Mast3rC0mput0;CommandTimeout=30;Trust Server Certificate=true");
+                    options.UseNpgsql(connString);
                     options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
                 });
                 
@@ -122,7 +134,14 @@ public partial class App : System.Windows.Application
             using (var scope = _host.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<OrionDbContext>();
+                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                
                 DbInitializer.Initialize(context);
+
+                if (config.GetValue<string>("Environment") == "Staging")
+                {
+                    StagingSeedData.Seed(context);
+                }
             }
 
             _loginView = _host.Services.GetRequiredService<LoginView>();

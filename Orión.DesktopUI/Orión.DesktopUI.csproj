@@ -27,9 +27,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\Icono.PNG" />
-    <Resource Include="Assets\Logo.jpg" />
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\Icono.ico" />
+    <Resource Include="Assets\Logo.jpg" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Orión.Infrastructure.Persistence.Migrations
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace Orión.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -99,13 +101,32 @@ namespace Orión.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Usuario",
+                columns: table => new
+                {
+                    ID_Usuario = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    Nombre_Usuario = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Password_Hash = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Rol = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Fecha_Creacion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    Activo = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Usuario", x => x.ID_Usuario);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tecnico",
                 columns: table => new
                 {
                     ID_Personal = table.Column<int>(type: "integer", nullable: false),
                     Nombre_Apellido = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Especialidad = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ID_Turno = table.Column<int>(type: "integer", nullable: false)
+                    ID_Turno = table.Column<int>(type: "integer", nullable: false),
+                    Activo = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -128,6 +149,7 @@ namespace Orión.Infrastructure.Persistence.Migrations
                     Marca = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Modelo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Fecha_Instalacion = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Activo = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     ID_NivelCritico = table.Column<int>(type: "integer", nullable: false),
                     ID_Ubicacion = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -158,6 +180,7 @@ namespace Orión.Infrastructure.Persistence.Migrations
                     Numero_Serie = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Especificaciones_Tecnicas = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Fecha_Ultimo_Cambio = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Activo = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     ID_Maquinaria = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
                     ID_TipoComponente = table.Column<int>(type: "integer", nullable: false),
                     ID_Estado = table.Column<int>(type: "integer", nullable: false)
@@ -225,6 +248,60 @@ namespace Orión.Infrastructure.Persistence.Migrations
                         principalTable: "TipoMantenimiento",
                         principalColumn: "ID_TipoMantto",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "EstadoComponente",
+                columns: new[] { "ID_Estado", "Descripcion_Estado" },
+                values: new object[,]
+                {
+                    { 1, "Activo" },
+                    { 2, "En reparacion" },
+                    { 3, "Dado de baja" },
+                    { 4, "En stock" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "EstadoSolicitud",
+                columns: new[] { "ID_EstadoSolicitud", "Descripcion_Estado" },
+                values: new object[,]
+                {
+                    { 1, "Abierta" },
+                    { 2, "En proceso" },
+                    { 3, "Esperando proveedor" },
+                    { 4, "Finalizada" },
+                    { 5, "Cancelada" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "NivelCritico",
+                columns: new[] { "ID_NivelCritico", "Descripcion" },
+                values: new object[,]
+                {
+                    { 1, "Baja" },
+                    { 2, "Media" },
+                    { 3, "Alta" },
+                    { 4, "Critico" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TipoMantenimiento",
+                columns: new[] { "ID_TipoMantto", "Descripcion_Tipo" },
+                values: new object[,]
+                {
+                    { 1, "Preventivo" },
+                    { 2, "Correctivo" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Turno",
+                columns: new[] { "ID_Turno", "Descripcion_Turno" },
+                values: new object[,]
+                {
+                    { 1, "Matutino" },
+                    { 2, "Vespertino" },
+                    { 3, "Nocturno" },
+                    { 4, "Mixto" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -318,6 +395,12 @@ namespace Orión.Infrastructure.Persistence.Migrations
                 table: "Ubicacion",
                 column: "Numero_Nave",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuario_Nombre_Usuario",
+                table: "Usuario",
+                column: "Nombre_Usuario",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -328,6 +411,9 @@ namespace Orión.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Solicitud_Servicio");
+
+            migrationBuilder.DropTable(
+                name: "Usuario");
 
             migrationBuilder.DropTable(
                 name: "EstadoComponente");

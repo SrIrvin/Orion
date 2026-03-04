@@ -9,11 +9,11 @@ using Orión.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace Orión.Infrastructure.Persistence.Migrations
+namespace Orión.Infrastructure.Migrations
 {
     [DbContext(typeof(OrionDbContext))]
-    [Migration("20260304021740_AddUsuariosTable")]
-    partial class AddUsuariosTable
+    [Migration("20260304061951_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,6 +31,12 @@ namespace Orión.Infrastructure.Persistence.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("ID_Componente");
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("Activo");
 
                     b.Property<string>("EspecificacionesTecnicas")
                         .HasMaxLength(50)
@@ -178,6 +184,12 @@ namespace Orión.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(15)")
                         .HasColumnName("ID_Maquinaria");
 
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("Activo");
+
                     b.Property<DateTime?>("FechaInstalacion")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("Fecha_Instalacion");
@@ -321,6 +333,12 @@ namespace Orión.Infrastructure.Persistence.Migrations
                     b.Property<int>("IdPersonal")
                         .HasColumnType("integer")
                         .HasColumnName("ID_Personal");
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("Activo");
 
                     b.Property<string>("Especialidad")
                         .HasMaxLength(50)
