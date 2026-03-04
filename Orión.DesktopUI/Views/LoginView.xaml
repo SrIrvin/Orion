@@ -13,24 +13,28 @@
                              UniformCornerRadius="12" materialDesign:ElevationAssist.Elevation="Dp12"
                              Background="White" Height="430">
             <StackPanel>
-                <Image Source="../Assets/Icono.PNG" Width="80" Height="80" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                <TextBlock Text="ORIÓN" Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
-
-                           HorizontalAlignment="Center" Margin="0,8,0,0" FontWeight="Black" 
-                           Foreground="{StaticResource PrimaryBrush}"/>
+                <Image Source="../Assets/Logo.jpg" Width="200" Margin="0,0,0,24" HorizontalAlignment="Center">
+                    <Image.Effect>
+                        <DropShadowEffect BlurRadius="10" Color="Gray" Opacity="0.3" ShadowDepth="2"/>
+                    </Image.Effect>
+                </Image>
+                
                 <TextBlock Text="INICIAR SESIÓN" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" 
-                           HorizontalAlignment="Center" Margin="0,0,0,32" Foreground="{StaticResource TextSecondaryBrush}"/>
+                           HorizontalAlignment="Center" Margin="0,0,0,32" Foreground="{StaticResource TextSecondaryBrush}"
+                           FontWeight="SemiBold" LetterSpacing="2"/>
                 
                 <TextBox materialDesign:HintAssist.Hint="Nombre de Usuario" 
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                          Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:TextFieldAssist.HasClearButton="True"
+                         materialDesign:TextFieldAssist.PrefixText="👤 "
                          Margin="0,0,0,24"/>
 
                 <PasswordBox materialDesign:HintAssist.Hint="Contraseña" 
                              Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
                              Name="PasswordBox"
                              materialDesign:TextFieldAssist.HasClearButton="True"
+                             materialDesign:TextFieldAssist.PrefixText="🔒 "
                              Margin="0,0,0,40"/>
 
                 <Button Content="ENTRAR" IsDefault="True" Command="{Binding LoginCommand}"
