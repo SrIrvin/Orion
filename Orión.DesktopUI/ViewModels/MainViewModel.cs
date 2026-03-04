@@ -37,6 +37,12 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void NavigateToSolicitudes()
+    {
+        CurrentView = _serviceProvider.GetRequiredService<SolicitudListView>();
+    }
+
+    [RelayCommand]
     private void NavigateToComponentes(string maquinariaId)
     {
         var view = _serviceProvider.GetRequiredService<ComponenteListView>();

@@ -10,6 +10,7 @@ using Orión.DesktopUI.ViewModels;
 using Orión.DesktopUI.Views;
 using Orión.Infrastructure.Persistence;
 using Orión.Infrastructure.Repositories;
+using Orión.Infrastructure.Services;
 
 namespace Orión.DesktopUI;
 
@@ -43,6 +44,9 @@ public partial class App : System.Windows.Application
                 services.AddScoped<IMaquinariaService, MaquinariaService>();
                 services.AddScoped<IComponenteService, ComponenteService>();
                 services.AddScoped<ITecnicoService, TecnicoService>();
+                services.AddScoped<ISolicitudServicioService, SolicitudServicioService>();
+                services.AddScoped<IReportService, ReportService>();
+                services.AddScoped<IDashboardService, DashboardService>();
 
                 // ViewModels
                 services.AddTransient<LoginViewModel>();
@@ -50,6 +54,8 @@ public partial class App : System.Windows.Application
                 services.AddTransient<MaquinariaViewModel>();
                 services.AddTransient<ComponenteViewModel>();
                 services.AddTransient<TecnicoViewModel>();
+                services.AddTransient<SolicitudViewModel>();
+                services.AddTransient<DashboardViewModel>();
 
                 // Views
                 services.AddTransient<LoginView>();
@@ -58,6 +64,7 @@ public partial class App : System.Windows.Application
                 services.AddTransient<MaquinariaListView>();
                 services.AddTransient<ComponenteListView>();
                 services.AddTransient<TecnicoListView>();
+                services.AddTransient<SolicitudListView>();
             })
             .Build();
 

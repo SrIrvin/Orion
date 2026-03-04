@@ -3,13 +3,13 @@ using Orión.DesktopUI.ViewModels;
 
 namespace Orión.DesktopUI.Views;
 
-public partial class DashboardView : UserControl
+public partial class SolicitudListView : UserControl
 {
-    public DashboardView(DashboardViewModel viewModel)
+    public SolicitudListView(SolicitudViewModel viewModel)
     {
         InitializeComponent();
         DataContext = viewModel;
 
-        Loaded += async (s, e) => await viewModel.LoadKpisAsync();
+        Loaded += async (s, e) => await viewModel.LoadDataAsync();
     }
 }

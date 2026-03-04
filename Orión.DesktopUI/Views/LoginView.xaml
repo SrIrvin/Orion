@@ -8,10 +8,10 @@
         Background="{StaticResource BackgroundBrush}"
         TextElement.Foreground="{StaticResource MaterialDesignBody}"
         FontFamily="{materialDesign:MaterialDesignFont}">
-        <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid Background="{StaticResource BackgroundBrush}" Margin="0,0,0,-16">
         <materialDesign:Card Width="350" Padding="32" VerticalAlignment="Center" HorizontalAlignment="Center" 
                              UniformCornerRadius="12" materialDesign:ElevationAssist.Elevation="Dp12"
-                             Background="White">
+                             Background="White" Height="430">
             <StackPanel>
                 <Image Source="../Assets/Icono.PNG" Width="80" Height="80" HorizontalAlignment="Center" Margin="0,0,0,8"/>
                 <TextBlock Text="ORIÓN" Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
