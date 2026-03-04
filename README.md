@@ -60,5 +60,9 @@ El proyecto cuenta con una suite de tests automatizados que validan la lógica d
 dotnet test Orión/Orión.sln
 ```
 
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia **MIT** - consulta el archivo [LICENSE](LICENSE) para más detalles.
+
 ---
-*Desarrollado con enfoque en Clean Code y Excelencia Técnica.*
+*Desarrollado con enfoque en Clean Code y Excelencia Técnica por sr_irvin.*
