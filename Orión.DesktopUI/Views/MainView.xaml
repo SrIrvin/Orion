@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:Orión.DesktopUI.Views"
         mc:Ignorable="d"
         Title="Orión - Gestor de Mantenimiento" Height="720" Width="1280"
+        Icon="../Assets/Icono.ico"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -16,7 +17,7 @@
         <materialDesign:DrawerHost.LeftDrawerContent>
             <DockPanel Width="250" Background="{StaticResource PrimaryBrush}">
                 <StackPanel DockPanel.Dock="Top" Margin="0,24,0,32">
-                    <materialDesign:PackIcon Kind="Octagon" Width="48" Height="48" HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}"/>
+                    <Image Source="../Assets/Icono.PNG" Width="64" Height="64" HorizontalAlignment="Center"/>
                     <TextBlock Text="ORIÓN" HorizontalAlignment="Center" Margin="0,8,0,0" 
                                FontSize="24" FontWeight="Black" Foreground="White"/>
                     <TextBlock Text="MANTENIMIENTO" HorizontalAlignment="Center" 

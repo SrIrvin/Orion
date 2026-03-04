@@ -3,18 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="Gestor Orión - Login" Height="450" Width="400"
+        Icon="../Assets/Icono.ico"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
-        Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{StaticResource BackgroundBrush}"
+        TextElement.Foreground="{StaticResource MaterialDesignBody}"
         FontFamily="{materialDesign:MaterialDesignFont}">
-    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid Background="{StaticResource BackgroundBrush}">
         <materialDesign:Card Width="350" Padding="32" VerticalAlignment="Center" HorizontalAlignment="Center" 
                              UniformCornerRadius="12" materialDesign:ElevationAssist.Elevation="Dp12"
                              Background="White">
             <StackPanel>
-                <materialDesign:PackIcon Kind="Octagon" Width="64" Height="64" HorizontalAlignment="Center" 
-                                         Foreground="{StaticResource PrimaryBrush}"/>
+                <Image Source="../Assets/Icono.PNG" Width="80" Height="80" HorizontalAlignment="Center" Margin="0,0,0,8"/>
                 <TextBlock Text="ORIÓN" Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
+
                            HorizontalAlignment="Center" Margin="0,8,0,0" FontWeight="Black" 
                            Foreground="{StaticResource PrimaryBrush}"/>
                 <TextBlock Text="INICIAR SESIÓN" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" 
