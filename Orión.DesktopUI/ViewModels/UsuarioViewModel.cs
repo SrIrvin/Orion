@@ -23,6 +23,11 @@ public partial class UsuarioViewModel : ObservableObject
     [ObservableProperty]
     private bool _isBusy;
 
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    private List<UsuarioDto> _allUsuarios = new();
+
     public UsuarioViewModel(IUsuarioService usuarioService)
     {
         _usuarioService = usuarioService;
@@ -35,11 +40,34 @@ public partial class UsuarioViewModel : ObservableObject
         try
         {
             var data = await _usuarioService.GetAllAsync();
-            Usuarios = new ObservableCollection<UsuarioDto>(data);
+            _allUsuarios = data.ToList();
+            ApplyFilter();
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            Usuarios = new ObservableCollection<UsuarioDto>(_allUsuarios);
+        }
+        else
+        {
+            var filtered = _allUsuarios.Where(u => 
+                u.NombreUsuario.Contains(SearchText, StringComparison.OrdinalIgnoreCase) || 
+                (u.Email?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                u.Rol.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            Usuarios = new ObservableCollection<UsuarioDto>(filtered);
         }
     }
 

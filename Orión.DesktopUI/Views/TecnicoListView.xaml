@@ -20,6 +20,17 @@
             <Button Command="{Binding LoadTecnicosCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
                 <materialDesign:PackIcon Kind="Refresh"/>
             </Button>
+            
+            <TextBox Width="250" Margin="32,0,0,0"
+                     materialDesign:HintAssist.Hint="Buscar técnico..."
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding LoadTecnicosCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+
             <Button Command="{Binding CreateTecnicoCommand}" 
                     Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0" ToolTip="Registrar Nuevo Técnico">

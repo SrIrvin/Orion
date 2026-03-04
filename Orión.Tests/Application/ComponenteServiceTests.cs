@@ -60,4 +60,39 @@ public class ComponenteServiceTests
         result.First().IdComponente.Should().Be("C1");
         result.First().TipoComponenteNombre.Should().Be("Motor");
     }
+
+    [Fact]
+    public async Task CreateAsync_Should_Persist_Componente()
+    {
+        // Arrange
+        var (context, repository) = GetDependencies();
+        var service = new ComponenteService(repository, context);
+        var componente = new Componente { IdComponente = "NEW-C", NombreComponente = "Nuevo", IdMaquinaria = "M1" };
+
+        // Act
+        await service.CreateAsync(componente);
+
+        // Assert
+        var result = await context.Set<Componente>().FindAsync("NEW-C");
+        result.Should().NotBeNull();
+        result!.IdMaquinaria.Should().Be("M1");
+    }
+
+    [Fact]
+    public async Task ToggleStatusAsync_Should_Logic_Delete()
+    {
+        // Arrange
+        var (context, repository) = GetDependencies();
+        var service = new ComponenteService(repository, context);
+        var componente = new Componente { IdComponente = "DEL-C", NombreComponente = "Test", Activo = true };
+        await context.Set<Componente>().AddAsync(componente);
+        await context.SaveChangesAsync();
+
+        // Act
+        await service.ToggleStatusAsync("DEL-C");
+
+        // Assert
+        var result = await context.Set<Componente>().FindAsync("DEL-C");
+        result!.Activo.Should().BeFalse();
+    }
 }

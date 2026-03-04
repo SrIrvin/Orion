@@ -27,6 +27,11 @@ public partial class TecnicoViewModel : ObservableObject
     [ObservableProperty]
     private TecnicoDto? _selectedTecnico;
 
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    private List<TecnicoDto> _allTecnicos = new();
+
     public TecnicoViewModel(ITecnicoService tecnicoService, IUserSessionService sessionService, IOrionDbContext context)
     {
         _tecnicoService = tecnicoService;
@@ -42,11 +47,34 @@ public partial class TecnicoViewModel : ObservableObject
         try
         {
             var data = await _tecnicoService.GetAllDtoAsync(includeInactive: IsAdmin);
-            Tecnicos = new ObservableCollection<TecnicoDto>(data);
+            _allTecnicos = data.ToList();
+            ApplyFilter();
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            Tecnicos = new ObservableCollection<TecnicoDto>(_allTecnicos);
+        }
+        else
+        {
+            var filtered = _allTecnicos.Where(t => 
+                t.NombreApellido.Contains(SearchText, StringComparison.OrdinalIgnoreCase) || 
+                (t.Especialidad?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                t.IdPersonal.ToString().Contains(SearchText)).ToList();
+            
+            Tecnicos = new ObservableCollection<TecnicoDto>(filtered);
         }
     }
 

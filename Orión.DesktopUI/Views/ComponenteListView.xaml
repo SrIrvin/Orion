@@ -24,7 +24,17 @@
             <TextBlock Text="{Binding MaquinariaId, StringFormat='(Máquina: {0})'}" 
                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
                        VerticalAlignment="Center" Margin="16,0,0,0" Foreground="{StaticResource SecondaryBrush}"/>
-            
+
+            <TextBox Width="250" Margin="32,0,0,0"
+                     materialDesign:HintAssist.Hint="Buscar componente..."
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding LoadComponentesCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+
             <Button Command="{Binding CreateComponenteCommand}" 
                     Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0" ToolTip="Registrar Nuevo Componente">

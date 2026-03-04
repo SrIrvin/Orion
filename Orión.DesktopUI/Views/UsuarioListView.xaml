@@ -20,6 +20,17 @@
             <Button Command="{Binding LoadUsuariosCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
                 <materialDesign:PackIcon Kind="Refresh"/>
             </Button>
+
+            <TextBox Width="250" Margin="32,0,0,0"
+                     materialDesign:HintAssist.Hint="Buscar usuario..."
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding LoadUsuariosCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+
             <Button Command="{Binding CreateUsuarioCommand}" Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="AccountPlus" Margin="0,0,8,0"/>

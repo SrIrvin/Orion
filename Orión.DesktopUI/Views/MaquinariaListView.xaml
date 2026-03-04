@@ -20,6 +20,17 @@
             <Button Command="{Binding LoadMaquinariasCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
                 <materialDesign:PackIcon Kind="Refresh"/>
             </Button>
+
+            <TextBox Width="250" Margin="32,0,0,0"
+                     materialDesign:HintAssist.Hint="Buscar maquinaria..."
+                     materialDesign:TextFieldAssist.HasClearButton="True"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding LoadMaquinariasCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+
             <Button Command="{Binding CreateMaquinariaCommand}" 
                     Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0" ToolTip="Registrar Nueva Maquinaria">

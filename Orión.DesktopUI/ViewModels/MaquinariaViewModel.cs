@@ -27,6 +27,11 @@ public partial class MaquinariaViewModel : ObservableObject
     [ObservableProperty]
     private MaquinariaDto? _selectedMaquinaria;
 
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    private List<MaquinariaDto> _allMaquinarias = new();
+
     public MaquinariaViewModel(IMaquinariaService maquinariaService, IUserSessionService sessionService, IOrionDbContext context)
     {
         _maquinariaService = maquinariaService;
@@ -42,11 +47,34 @@ public partial class MaquinariaViewModel : ObservableObject
         try
         {
             var data = await _maquinariaService.GetAllDtoAsync(includeInactive: IsAdmin);
-            Maquinarias = new ObservableCollection<MaquinariaDto>(data);
+            _allMaquinarias = data.ToList();
+            ApplyFilter();
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            Maquinarias = new ObservableCollection<MaquinariaDto>(_allMaquinarias);
+        }
+        else
+        {
+            var filtered = _allMaquinarias.Where(m => 
+                m.NombreMaquina.Contains(SearchText, StringComparison.OrdinalIgnoreCase) || 
+                m.IdMaquinaria.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                (m.Tipo?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+            
+            Maquinarias = new ObservableCollection<MaquinariaDto>(filtered);
         }
     }
 

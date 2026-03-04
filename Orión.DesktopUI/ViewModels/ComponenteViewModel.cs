@@ -28,6 +28,11 @@ public partial class ComponenteViewModel : ObservableObject
     private ComponenteDto? _selectedComponente;
 
     [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    private List<ComponenteDto> _allComponentes = new();
+
+    [ObservableProperty]
     private string _maquinariaId = string.Empty;
 
     public ComponenteViewModel(IComponenteService componenteService, IUserSessionService sessionService, IOrionDbContext context)
@@ -47,11 +52,34 @@ public partial class ComponenteViewModel : ObservableObject
         try
         {
             var data = await _componenteService.GetByMaquinariaIdDtoAsync(MaquinariaId, includeInactive: IsAdmin);
-            Componentes = new ObservableCollection<ComponenteDto>(data);
+            _allComponentes = data.ToList();
+            ApplyFilter();
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            Componentes = new ObservableCollection<ComponenteDto>(_allComponentes);
+        }
+        else
+        {
+            var filtered = _allComponentes.Where(c => 
+                c.NombreComponente.Contains(SearchText, StringComparison.OrdinalIgnoreCase) || 
+                (c.Marca?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                c.IdComponente.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
+            
+            Componentes = new ObservableCollection<ComponenteDto>(filtered);
         }
     }
 

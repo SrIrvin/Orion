@@ -52,4 +52,39 @@ public class MaquinariaServiceTests
         dto.NivelCriticoDescripcion.Should().Be("Alta");
         dto.UbicacionNave.Should().Be("Nave 5");
     }
+
+    [Fact]
+    public async Task CreateAsync_Should_Persist_Maquinaria()
+    {
+        // Arrange
+        var (context, repository) = GetDependencies();
+        var service = new MaquinariaService(repository, context);
+        var maquina = new Maquinaria { IdMaquinaria = "NEW-01", NombreMaquina = "Nueva Maquina" };
+
+        // Act
+        await service.CreateAsync(maquina);
+
+        // Assert
+        var result = await context.Set<Maquinaria>().FindAsync("NEW-01");
+        result.Should().NotBeNull();
+        result!.NombreMaquina.Should().Be("Nueva Maquina");
+    }
+
+    [Fact]
+    public async Task ToggleStatusAsync_Should_Logic_Delete()
+    {
+        // Arrange
+        var (context, repository) = GetDependencies();
+        var service = new MaquinariaService(repository, context);
+        var maquina = new Maquinaria { IdMaquinaria = "DEL-01", NombreMaquina = "Test", Activo = true };
+        await context.Set<Maquinaria>().AddAsync(maquina);
+        await context.SaveChangesAsync();
+
+        // Act
+        await service.ToggleStatusAsync("DEL-01");
+
+        // Assert
+        var result = await context.Set<Maquinaria>().FindAsync("DEL-01");
+        result!.Activo.Should().BeFalse();
+    }
 }

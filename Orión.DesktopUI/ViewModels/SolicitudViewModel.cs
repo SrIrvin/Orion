@@ -40,6 +40,11 @@ public partial class SolicitudViewModel : ObservableObject
     [ObservableProperty]
     private string _descripcionFalla = string.Empty;
 
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    private List<SolicitudServicioDto> _allSolicitudes = new();
+
     public SolicitudViewModel(
         ISolicitudServicioService solicitudService, 
         IMaquinariaService maquinariaService,
@@ -59,16 +64,40 @@ public partial class SolicitudViewModel : ObservableObject
         try
         {
             var data = await _solicitudService.GetAllDtoAsync();
-            Solicitudes = new ObservableCollection<SolicitudServicioDto>(data);
+            _allSolicitudes = data.ToList();
+            ApplyFilter();
 
             var maqData = await _maquinariaService.GetAllAsync();
             Maquinas = new ObservableCollection<Maquinaria>(maqData);
 
-            TiposMantenimiento = new ObservableCollection<TipoMantenimiento>(_context.TiposMantenimiento);
+            TiposMantenimiento = new ObservableCollection<TipoMantenimiento>(_context.TiposMantenimiento.ToList());
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            Solicitudes = new ObservableCollection<SolicitudServicioDto>(_allSolicitudes);
+        }
+        else
+        {
+            var filtered = _allSolicitudes.Where(s => 
+                s.NombreMaquinaria.Contains(SearchText, StringComparison.OrdinalIgnoreCase) || 
+                (s.DescripcionFalla?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                s.EstadoDescripcion.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                s.IdSS.ToString().Contains(SearchText)).ToList();
+            
+            Solicitudes = new ObservableCollection<SolicitudServicioDto>(filtered);
         }
     }
 
