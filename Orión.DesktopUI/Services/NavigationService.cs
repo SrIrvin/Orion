@@ -11,6 +11,13 @@ public partial class NavigationService : ObservableObject, INavigationService
     [ObservableProperty]
     private object? _currentView;
 
+    public event Action? CurrentViewChanged;
+
+    partial void OnCurrentViewChanged(object? value)
+    {
+        CurrentViewChanged?.Invoke();
+    }
+
     public NavigationService(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;

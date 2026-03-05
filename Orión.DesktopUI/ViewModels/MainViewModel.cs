@@ -21,11 +21,7 @@ public partial class MainViewModel : ObservableObject
     public MainViewModel(INavigationService navigationService, IUserSessionService sessionService)
     {
         _navigationService = navigationService;
-        ((NavigationService)_navigationService).PropertyChanged += (s, e) => 
-        {
-            if (e.PropertyName == nameof(INavigationService.CurrentView))
-                OnPropertyChanged(nameof(CurrentView));
-        };
+        _navigationService.CurrentViewChanged += () => OnPropertyChanged(nameof(CurrentView));
 
         _navigationService.NavigateTo<DashboardView>();
         IsAdmin = sessionService.IsAdmin;

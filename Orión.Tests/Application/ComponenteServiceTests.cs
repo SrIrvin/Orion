@@ -79,20 +79,40 @@ public class ComponenteServiceTests
     }
 
     [Fact]
-    public async Task ToggleStatusAsync_Should_Logic_Delete()
+    public async Task GetByMaquinariaIdDtoAsync_Should_Filter_Inactive_By_Default()
     {
         // Arrange
         var (context, repository) = GetDependencies();
         var service = new ComponenteService(repository, context);
-        var componente = new Componente { IdComponente = "DEL-C", NombreComponente = "Test", Activo = true };
-        await context.Set<Componente>().AddAsync(componente);
+
+        var tipo = new TipoComponente { IdTipoComponente = 1, NombreTipo = "Motor" };
+        var estado = new EstadoComponente { IdEstado = 1, DescripcionEstado = "Activo" };
+        
+        var compActivo = new Componente { IdComponente = "ACT", IdMaquinaria = "M1", Activo = true, TipoComponente = tipo, EstadoComponente = estado };
+        var compInactivo = new Componente { IdComponente = "INA", IdMaquinaria = "M1", Activo = false, TipoComponente = tipo, EstadoComponente = estado };
+
+        await context.Set<Componente>().AddRangeAsync(compActivo, compInactivo);
         await context.SaveChangesAsync();
 
         // Act
-        await service.ToggleStatusAsync("DEL-C");
+        var result = await service.GetByMaquinariaIdDtoAsync("M1", includeInactive: false);
 
         // Assert
-        var result = await context.Set<Componente>().FindAsync("DEL-C");
-        result!.Activo.Should().BeFalse();
+        result.Should().HaveCount(1);
+        result.First().IdComponente.Should().Be("ACT");
+    }
+
+    [Fact]
+    public async Task GetByMaquinariaIdDtoAsync_Should_Return_Empty_For_NonExistent_Maquinaria()
+    {
+        // Arrange
+        var (context, repository) = GetDependencies();
+        var service = new ComponenteService(repository, context);
+
+        // Act
+        var result = await service.GetByMaquinariaIdDtoAsync("NON-EXISTENT");
+
+        // Assert
+        result.Should().BeEmpty();
     }
 }

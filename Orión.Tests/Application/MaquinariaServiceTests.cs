@@ -71,20 +71,63 @@ public class MaquinariaServiceTests
     }
 
     [Fact]
-    public async Task ToggleStatusAsync_Should_Logic_Delete()
+    public async Task GetAllDtoAsync_Should_Filter_Inactive_By_Default()
     {
         // Arrange
         var (context, repository) = GetDependencies();
         var service = new MaquinariaService(repository, context);
-        var maquina = new Maquinaria { IdMaquinaria = "DEL-01", NombreMaquina = "Test", Activo = true };
-        await context.Set<Maquinaria>().AddAsync(maquina);
+
+        var nivel = new NivelCritico { IdNivelCritico = 1, Descripcion = "Alta" };
+        var ubicacion = new Ubicacion { IdUbicacion = 1, NumeroNave = 5 };
+        
+        var maqActiva = new Maquinaria { IdMaquinaria = "ACT-01", NombreMaquina = "Activa", Activo = true, NivelCritico = nivel, Ubicacion = ubicacion };
+        var maqInactiva = new Maquinaria { IdMaquinaria = "INA-01", NombreMaquina = "Inactiva", Activo = false, NivelCritico = nivel, Ubicacion = ubicacion };
+
+        await context.Set<Maquinaria>().AddRangeAsync(maqActiva, maqInactiva);
         await context.SaveChangesAsync();
 
         // Act
-        await service.ToggleStatusAsync("DEL-01");
+        var result = await service.GetAllDtoAsync(includeInactive: false);
 
         // Assert
-        var result = await context.Set<Maquinaria>().FindAsync("DEL-01");
-        result!.Activo.Should().BeFalse();
+        result.Should().HaveCount(1);
+        result.First().IdMaquinaria.Should().Be("ACT-01");
+    }
+
+    [Fact]
+    public async Task GetAllDtoAsync_Should_Include_Inactive_When_Requested()
+    {
+        // Arrange
+        var (context, repository) = GetDependencies();
+        var service = new MaquinariaService(repository, context);
+
+        var nivel = new NivelCritico { IdNivelCritico = 1, Descripcion = "Alta" };
+        var ubicacion = new Ubicacion { IdUbicacion = 1, NumeroNave = 5 };
+        
+        var maqActiva = new Maquinaria { IdMaquinaria = "ACT-01", NombreMaquina = "Activa", Activo = true, NivelCritico = nivel, Ubicacion = ubicacion };
+        var maqInactiva = new Maquinaria { IdMaquinaria = "INA-01", NombreMaquina = "Inactiva", Activo = false, NivelCritico = nivel, Ubicacion = ubicacion };
+
+        await context.Set<Maquinaria>().AddRangeAsync(maqActiva, maqInactiva);
+        await context.SaveChangesAsync();
+
+        // Act
+        var result = await service.GetAllDtoAsync(includeInactive: true);
+
+        // Assert
+        result.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_Should_Return_Null_For_Invalid_Id()
+    {
+        // Arrange
+        var (context, repository) = GetDependencies();
+        var service = new MaquinariaService(repository, context);
+
+        // Act
+        var result = await service.GetByIdAsync("INVALID-ID");
+
+        // Assert
+        result.Should().BeNull();
     }
 }
