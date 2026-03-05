@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -48,8 +49,101 @@
             </materialDesign:Card>
         </UniformGrid>
 
+        <!-- Mapa de Calor de Actividad Global -->
+        <materialDesign:Card Grid.Row="2" Margin="8,24,8,8" Padding="24" Background="White" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp2">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Margin="0,0,0,24">
+                    <DockPanel>
+                        <StackPanel>
+                            <TextBlock Text="INTENSIDAD DE FALLAS GLOBAL" Style="{StaticResource MaterialDesignHeadline6TextBlock}" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}"/>
+                            <TextBlock Text="Resumen de reportes totales en los últimos 30 días" Style="{StaticResource MaterialDesignCaptionTextBlock}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </StackPanel>
+                        <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
+                                Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                Command="{Binding NavigateToSolicitudesCommand}"
+                                Content="VER DETALLE" Height="30" Padding="8,0"/>
+                    </DockPanel>
+                </StackPanel>
+
+                <!-- Leyenda -->
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                    <TextBlock Text="Baja actividad" Style="{StaticResource MaterialDesignCaptionTextBlock}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <Rectangle Width="12" Height="12" Fill="#EBEDF0" Margin="2"/>
+                    <Rectangle Width="12" Height="12" Fill="#FFF4D1" Margin="2"/>
+                    <Rectangle Width="12" Height="12" Fill="#FFD082" Margin="2"/>
+                    <Rectangle Width="12" Height="12" Fill="#FF8A65" Margin="2"/>
+                    <Rectangle Width="12" Height="12" Fill="#E53935" Margin="2"/>
+                    <TextBlock Text="Alta actividad" Style="{StaticResource MaterialDesignCaptionTextBlock}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/> <!-- Etiquetas Días -->
+                        <ColumnDefinition Width="*"/>    <!-- Scrollable Heatmap -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Etiquetas fijas de Días -->
+                    <StackPanel Grid.Column="0" Margin="0,25,12,0" VerticalAlignment="Top">
+                        <TextBlock Text="Dom" Height="30" Margin="0,3" FontSize="10" VerticalAlignment="Center" Opacity="0.6"/>
+                        <TextBlock Text="Lun" Height="30" Margin="0,3" FontSize="10" VerticalAlignment="Center" Opacity="0.6"/>
+                        <TextBlock Text="Mar" Height="30" Margin="0,3" FontSize="10" VerticalAlignment="Center" Opacity="0.6"/>
+                        <TextBlock Text="Mié" Height="30" Margin="0,3" FontSize="10" VerticalAlignment="Center" Opacity="0.6"/>
+                        <TextBlock Text="Jue" Height="30" Margin="0,3" FontSize="10" VerticalAlignment="Center" Opacity="0.6"/>
+                        <TextBlock Text="Vie" Height="30" Margin="0,3" FontSize="10" VerticalAlignment="Center" Opacity="0.6"/>
+                        <TextBlock Text="Sáb" Height="30" Margin="0,3" FontSize="10" VerticalAlignment="Center" Opacity="0.6"/>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <!-- ItemsControl de COLUMNAS (Semanas) -->
+                        <ItemsControl ItemsSource="{Binding GlobalHeatmapData}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="2,0">
+                                        <!-- Encabezado de Fecha de la Semana -->
+                                        <TextBlock Text="{Binding DateHeader}" FontSize="8" TextAlignment="Center" Opacity="0.5" FontWeight="Bold" Margin="0,0,0,8"/>
+                                        
+                                        <!-- ItemsControl de FILAS (Días de esa semana) -->
+                                        <ItemsControl ItemsSource="{Binding Days}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToSolicitudesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                                            Padding="0" Margin="0,3" Width="30" Height="30">
+                                                        <Border Width="28" Height="28" CornerRadius="4" Background="{Binding ColorLevel}">
+                                                            <StackPanel VerticalAlignment="Center">
+                                                                <TextBlock Text="{Binding FailureCount}" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#444" 
+                                                                           Visibility="{Binding FailureCount, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                                                <ToolTipService.ToolTip>
+                                                                    <ToolTip>
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding Date, StringFormat='Fecha: {0:dd/MM/yyyy}'}" FontWeight="Bold"/>
+                                                                            <TextBlock Text="{Binding DayName, StringFormat='Día: {0}'}"/>
+                                                                            <TextBlock Text="{Binding FailureCount, StringFormat='Fallas totales: {0}'}"/>
+                                                                        </StackPanel>
+                                                                    </ToolTip>
+                                                                </ToolTipService.ToolTip>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </DockPanel>
+        </materialDesign:Card>
+
         <!-- Mensaje de bienvenida/fondo y Marca de Agua -->
-        <Grid Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,16,16">
+        <Grid Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,16,16">
             <StackPanel HorizontalAlignment="Right">
                 <Image Source="../Assets/Icono.PNG" Width="120" Opacity="0.03" HorizontalAlignment="Right" Margin="0,0,0,4"/>
                 <TextBlock Text="ORIÓN - DEMO BETA CERRADA v0.0.1" 

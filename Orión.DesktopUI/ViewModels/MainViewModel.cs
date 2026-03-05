@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Orión.Application.Interfaces;
 using Orión.DesktopUI.Views;
@@ -25,6 +26,12 @@ public partial class MainViewModel : ObservableObject
 
         _navigationService.NavigateTo<DashboardView>();
         IsAdmin = sessionService.IsAdmin;
+
+        // Registrar mensaje de navegación desde el mapa de calor global
+        WeakReferenceMessenger.Default.Register<NavigateToSolicitudesMessage>(this, (r, m) =>
+        {
+            NavigateToSolicitudes();
+        });
     }
 
     [RelayCommand]
