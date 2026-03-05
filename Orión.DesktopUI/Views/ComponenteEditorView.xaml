@@ -61,10 +61,13 @@
                       SelectedValue="{Binding IdEstado}"
                       Margin="0,0,0,16"/>
 
-            <TextBox materialDesign:HintAssist.Hint="Nombre del Proveedor (Opcional)" 
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                     Text="{Binding NombreProveedor, UpdateSourceTrigger=PropertyChanged}"
-                     Margin="0,0,0,24"/>
+            <ComboBox materialDesign:HintAssist.Hint="Proveedor (Seleccione o escriba nuevo)" 
+                      Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                      IsEditable="True"
+                      ItemsSource="{Binding Proveedores}"
+                      DisplayMemberPath="Nombre"
+                      Text="{Binding NombreProveedor, UpdateSourceTrigger=PropertyChanged}"
+                      Margin="0,0,0,24"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Style="{StaticResource MaterialDesignFlatButton}"

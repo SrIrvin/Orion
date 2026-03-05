@@ -29,6 +29,7 @@ public partial class ComponenteEditorViewModel : ObservableObject
     
     [ObservableProperty] private ObservableCollection<TipoComponente> _tiposComponentes = new();
     [ObservableProperty] private ObservableCollection<EstadoComponente> _estadosComponentes = new();
+    [ObservableProperty] private ObservableCollection<Proveedor> _proveedores = new();
 
     public ComponenteEditorViewModel(IComponenteService componenteService, IProveedorService proveedorService, IOrionDbContext context, string maquinariaId, ComponenteDto? componente = null)
     {
@@ -37,7 +38,9 @@ public partial class ComponenteEditorViewModel : ObservableObject
         _context = context;
         IdMaquinaria = maquinariaId;
         
-        LoadCatalogs();
+        // Cargar catálogos sincrónicos
+        TiposComponentes = new ObservableCollection<TipoComponente>(_context.TiposComponentes.ToList());
+        EstadosComponentes = new ObservableCollection<EstadoComponente>(_context.EstadosComponentes.ToList());
 
         if (componente == null)
         {
@@ -62,10 +65,10 @@ public partial class ComponenteEditorViewModel : ObservableObject
         }
     }
 
-    private void LoadCatalogs()
+    public async Task InitializeAsync()
     {
-        TiposComponentes = new ObservableCollection<TipoComponente>(_context.TiposComponentes.ToList());
-        EstadosComponentes = new ObservableCollection<EstadoComponente>(_context.EstadosComponentes.ToList());
+        var provs = await _proveedorService.GetAllAsync();
+        Proveedores = new ObservableCollection<Proveedor>(provs);
     }
 
     [RelayCommand]

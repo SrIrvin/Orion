@@ -91,6 +91,8 @@ public partial class ComponenteViewModel : ObservableObject
         if (string.IsNullOrEmpty(MaquinariaId)) return;
 
         var viewModel = new ComponenteEditorViewModel(_componenteService, _proveedorService, _context, MaquinariaId);
+        await viewModel.InitializeAsync();
+        
         var view = new ComponenteEditorView { DataContext = viewModel };
 
         await DialogHost.Show(view, "MainDialogHost");
@@ -103,6 +105,8 @@ public partial class ComponenteViewModel : ObservableObject
         if (SelectedComponente == null) return;
 
         var viewModel = new ComponenteEditorViewModel(_componenteService, _proveedorService, _context, MaquinariaId, SelectedComponente);
+        await viewModel.InitializeAsync();
+
         var view = new ComponenteEditorView { DataContext = viewModel };
 
         await DialogHost.Show(view, "MainDialogHost");
