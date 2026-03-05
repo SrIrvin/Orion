@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Orión.Application.DTOs;
 using Orión.Application.Interfaces;
 using Orión.Domain.Entities;
@@ -17,18 +18,20 @@ public class ComponenteService : IComponenteService
 
     public async Task<IEnumerable<ComponenteDto>> GetByMaquinariaIdDtoAsync(string maquinariaId, bool includeInactive = false)
     {
-        var componentes = await _repository.GetWithIncludesAsync(
-            c => c.IdMaquinaria == maquinariaId,
-            c => c.TipoComponente,
-            c => c.EstadoComponente);
+        var query = _repository.GetQueryable()
+            .Where(c => c.IdMaquinaria == maquinariaId)
+            .Include(c => c.TipoComponente)
+            .Include(c => c.EstadoComponente)
+            .AsQueryable();
 
-        var query = componentes.AsEnumerable();
         if (!includeInactive)
         {
             query = query.Where(c => c.Activo);
         }
 
-        return query.Select(c => new ComponenteDto
+        var list = await query.ToListAsync();
+
+        return list.Select(c => new ComponenteDto
         {
             IdComponente = c.IdComponente,
             NombreComponente = c.NombreComponente,
@@ -47,8 +50,9 @@ public class ComponenteService : IComponenteService
 
     public async Task<IEnumerable<Componente>> GetByMaquinariaIdAsync(string maquinariaId)
     {
-        var data = await _repository.FindAsync(c => c.IdMaquinaria == maquinariaId);
-        return data.Where(c => c.Activo);
+        return await _repository.GetQueryable()
+            .Where(c => c.IdMaquinaria == maquinariaId && c.Activo)
+            .ToListAsync();
     }
 
     public async Task<Componente?> GetByIdAsync(string id)

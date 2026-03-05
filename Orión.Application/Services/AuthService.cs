@@ -8,17 +8,19 @@ namespace Orión.Application.Services;
 
 public class AuthService : IAuthService
 {
+    private readonly IRepository<Usuario> _repository;
     private readonly IOrionDbContext _context;
 
-    public AuthService(IOrionDbContext context)
+    public AuthService(IRepository<Usuario> repository, IOrionDbContext context)
     {
+        _repository = repository;
         _context = context;
     }
 
     public async Task<Usuario?> LoginAsync(string username, string password)
     {
-        var usuario = await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.NombreUsuario == username && u.Activo);
+        var query = await _repository.FindAsync(u => u.NombreUsuario == username && u.Activo);
+        var usuario = query.FirstOrDefault();
 
         if (usuario == null || !BC.Verify(password, usuario.PasswordHash))
         {
@@ -31,7 +33,8 @@ public class AuthService : IAuthService
     public async Task<Usuario> RegisterAsync(string username, string password, string? email, string rol)
     {
         // Verificar si el usuario ya existe
-        if (await _context.Usuarios.AnyAsync(u => u.NombreUsuario == username))
+        var query = await _repository.FindAsync(u => u.NombreUsuario == username);
+        if (query.Any())
         {
             throw new UserAlreadyExistsException(username);
         }
@@ -46,7 +49,7 @@ public class AuthService : IAuthService
             Activo = true
         };
 
-        _context.Usuarios.Add(usuario);
+        await _repository.AddAsync(usuario);
         await _context.SaveChangesAsync();
 
         return usuario;

@@ -25,11 +25,8 @@ public class OrionDbContext : DbContext, IOrionDbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=DB_Orion;Username=admin;Password=Mast3rC0mput0;CommandTimeout=30;Trust Server Certificate=true")
-                          .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
-        }
+        // Se recomienda no tener la cadena de conexión aquí. 
+        // Se inyecta a través de DbContextOptions en App.xaml.cs
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Orión.Application.DTOs;
 using Orión.Application.Interfaces;
 using Orión.Domain.Entities;
@@ -17,17 +18,19 @@ public class MaquinariaService : IMaquinariaService
 
     public async Task<IEnumerable<MaquinariaDto>> GetAllDtoAsync(bool includeInactive = false)
     {
-        var maquinas = await _repository.GetAllWithIncludesAsync(
-            m => m.NivelCritico,
-            m => m.Ubicacion);
+        var query = _repository.GetQueryable()
+            .Include(m => m.NivelCritico)
+            .Include(m => m.Ubicacion)
+            .AsQueryable();
 
-        var query = maquinas.AsEnumerable();
         if (!includeInactive)
         {
             query = query.Where(m => m.Activo);
         }
 
-        return query.Select(m => new MaquinariaDto
+        var list = await query.ToListAsync();
+
+        return list.Select(m => new MaquinariaDto
         {
             IdMaquinaria = m.IdMaquinaria,
             NombreMaquina = m.NombreMaquina,
@@ -45,8 +48,9 @@ public class MaquinariaService : IMaquinariaService
 
     public async Task<IEnumerable<Maquinaria>> GetAllAsync()
     {
-        var data = await _repository.GetAllAsync();
-        return data.Where(m => m.Activo);
+        return await _repository.GetQueryable()
+            .Where(m => m.Activo)
+            .ToListAsync();
     }
 
     public async Task<Maquinaria?> GetByIdAsync(string id)

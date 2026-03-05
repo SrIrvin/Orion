@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Orión.Application.DTOs;
 using Orión.Application.Interfaces;
 using Orión.Domain.Entities;
@@ -17,15 +18,18 @@ public class TecnicoService : ITecnicoService
 
     public async Task<IEnumerable<TecnicoDto>> GetAllDtoAsync(bool includeInactive = false)
     {
-        var tecnicos = await _repository.GetAllWithIncludesAsync(t => t.Turno);
-        
-        var query = tecnicos.AsEnumerable();
+        var query = _repository.GetQueryable()
+            .Include(t => t.Turno)
+            .AsQueryable();
+
         if (!includeInactive)
         {
             query = query.Where(t => t.Activo);
         }
 
-        return query.Select(t => new TecnicoDto
+        var list = await query.ToListAsync();
+
+        return list.Select(t => new TecnicoDto
         {
             IdPersonal = t.IdPersonal,
             NombreApellido = t.NombreApellido,
@@ -38,8 +42,9 @@ public class TecnicoService : ITecnicoService
 
     public async Task<IEnumerable<Tecnico>> GetAllAsync()
     {
-        var tecnicos = await _repository.GetAllAsync();
-        return tecnicos.Where(t => t.Activo);
+        return await _repository.GetQueryable()
+            .Where(t => t.Activo)
+            .ToListAsync();
     }
 
     public async Task<Tecnico?> GetByIdAsync(int id)

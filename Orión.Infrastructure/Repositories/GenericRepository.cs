@@ -51,6 +51,11 @@ public class GenericRepository<T> : IRepository<T> where T : class
         return await _dbSet.Where(predicate).ToListAsync();
     }
 
+    public IQueryable<T> GetQueryable()
+    {
+        return _dbSet.AsQueryable();
+    }
+
     public async Task AddAsync(T entity)
     {
         await _dbSet.AddAsync(entity);

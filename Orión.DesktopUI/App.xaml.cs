@@ -8,6 +8,8 @@ using Orión.Application.Interfaces;
 using Orión.Application.Services;
 using Orión.DesktopUI.ViewModels;
 using Orión.DesktopUI.Views;
+using Orión.DesktopUI.Interfaces;
+using Orión.DesktopUI.Services;
 using Orión.Infrastructure.Persistence;
 using Orión.Infrastructure.Repositories;
 using Orión.Infrastructure.Services;
@@ -24,11 +26,7 @@ public partial class App : System.Windows.Application
 
     public App()
     {
-        // 1. Configurar Handlers de Excepciones Globales
-        DispatcherUnhandledException += OnDispatcherUnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += OnCurrentDomainUnhandledException;
-        TaskScheduler.UnobservedTaskException += OnTaskSchedulerUnobservedTaskException;
-
+        // ... (resto del constructor igual hasta ConfigureServices)
         _host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, builder) =>
             {
@@ -37,6 +35,7 @@ public partial class App : System.Windows.Application
             })
             .ConfigureServices((context, services) =>
             {
+                // ... (configuración de DB igual)
                 var configuration = context.Configuration;
                 var environment = configuration.GetValue<string>("Environment") ?? "Development";
                 var connStringName = environment == "Staging" ? "StagingConnection" : "DefaultConnection";
@@ -53,6 +52,9 @@ public partial class App : System.Windows.Application
 
                 // Repositorios
                 services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+
+                // Navegación UI
+                services.AddSingleton<INavigationService, NavigationService>();
 
                 // Servicios de Aplicación
                 services.AddSingleton<IUserSessionService, UserSessionService>();
