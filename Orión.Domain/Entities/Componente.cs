@@ -14,9 +14,11 @@ public class Componente : BaseEntity
     public string IdMaquinaria { get; set; } = string.Empty;
     public int IdTipoComponente { get; set; }
     public int IdEstado { get; set; }
+    public int? IdProveedor { get; set; }
 
     // Propiedades de Navegación
     public virtual Maquinaria Maquinaria { get; set; } = null!;
     public virtual TipoComponente TipoComponente { get; set; } = null!;
     public virtual EstadoComponente EstadoComponente { get; set; } = null!;
+    public virtual Proveedor? Proveedor { get; set; }
 }

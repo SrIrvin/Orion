@@ -12,6 +12,7 @@ namespace Orión.DesktopUI.ViewModels;
 public partial class ComponenteViewModel : ObservableObject
 {
     private readonly IComponenteService _componenteService;
+    private readonly IProveedorService _proveedorService;
     private readonly IUserSessionService _sessionService;
     private readonly IOrionDbContext _context;
 
@@ -35,9 +36,10 @@ public partial class ComponenteViewModel : ObservableObject
     [ObservableProperty]
     private string _maquinariaId = string.Empty;
 
-    public ComponenteViewModel(IComponenteService componenteService, IUserSessionService sessionService, IOrionDbContext context)
+    public ComponenteViewModel(IComponenteService componenteService, IProveedorService proveedorService, IUserSessionService sessionService, IOrionDbContext context)
     {
         _componenteService = componenteService;
+        _proveedorService = proveedorService;
         _sessionService = sessionService;
         _context = context;
         IsAdmin = _sessionService.IsAdmin;
@@ -88,7 +90,7 @@ public partial class ComponenteViewModel : ObservableObject
     {
         if (string.IsNullOrEmpty(MaquinariaId)) return;
 
-        var viewModel = new ComponenteEditorViewModel(_componenteService, _context, MaquinariaId);
+        var viewModel = new ComponenteEditorViewModel(_componenteService, _proveedorService, _context, MaquinariaId);
         var view = new ComponenteEditorView { DataContext = viewModel };
 
         await DialogHost.Show(view, "MainDialogHost");
@@ -100,7 +102,7 @@ public partial class ComponenteViewModel : ObservableObject
     {
         if (SelectedComponente == null) return;
 
-        var viewModel = new ComponenteEditorViewModel(_componenteService, _context, MaquinariaId, SelectedComponente);
+        var viewModel = new ComponenteEditorViewModel(_componenteService, _proveedorService, _context, MaquinariaId, SelectedComponente);
         var view = new ComponenteEditorView { DataContext = viewModel };
 
         await DialogHost.Show(view, "MainDialogHost");

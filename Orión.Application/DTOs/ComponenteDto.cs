@@ -13,5 +13,7 @@ public class ComponenteDto
     public string TipoComponenteNombre { get; set; } = string.Empty;
     public int IdEstado { get; set; }
     public string EstadoDescripcion { get; set; } = string.Empty;
-    public bool Activo { get; set; } = true;
-}
+    public int? IdProveedor { get; set; }
+    public string? ProveedorNombre { get; set; }
+    public bool Activo { get; set; }
+    }

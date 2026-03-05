@@ -11,6 +11,7 @@ namespace Orión.DesktopUI.ViewModels;
 public partial class ComponenteEditorViewModel : ObservableObject
 {
     private readonly IComponenteService _componenteService;
+    private readonly IProveedorService _proveedorService;
     private readonly IOrionDbContext _context;
 
     [ObservableProperty] private string _idComponente = string.Empty;
@@ -22,15 +23,17 @@ public partial class ComponenteEditorViewModel : ObservableObject
     [ObservableProperty] private string _idMaquinaria = string.Empty;
     [ObservableProperty] private int _idTipoComponente;
     [ObservableProperty] private int _idEstado;
+    [ObservableProperty] private string? _nombreProveedor;
     [ObservableProperty] private bool _isNew;
     [ObservableProperty] private string _title = string.Empty;
     
     [ObservableProperty] private ObservableCollection<TipoComponente> _tiposComponentes = new();
     [ObservableProperty] private ObservableCollection<EstadoComponente> _estadosComponentes = new();
 
-    public ComponenteEditorViewModel(IComponenteService componenteService, IOrionDbContext context, string maquinariaId, ComponenteDto? componente = null)
+    public ComponenteEditorViewModel(IComponenteService componenteService, IProveedorService proveedorService, IOrionDbContext context, string maquinariaId, ComponenteDto? componente = null)
     {
         _componenteService = componenteService;
+        _proveedorService = proveedorService;
         _context = context;
         IdMaquinaria = maquinariaId;
         
@@ -55,6 +58,7 @@ public partial class ComponenteEditorViewModel : ObservableObject
             FechaUltimoCambio = componente.FechaUltimoCambio;
             IdTipoComponente = componente.IdTipoComponente;
             IdEstado = componente.IdEstado;
+            NombreProveedor = componente.ProveedorNombre;
         }
     }
 
@@ -71,6 +75,12 @@ public partial class ComponenteEditorViewModel : ObservableObject
 
         try
         {
+            Proveedor? proveedor = null;
+            if (!string.IsNullOrWhiteSpace(NombreProveedor))
+            {
+                proveedor = await _proveedorService.GetOrCreateByNameAsync(NombreProveedor);
+            }
+
             if (IsNew)
             {
                 await _componenteService.CreateAsync(new Componente
@@ -84,6 +94,7 @@ public partial class ComponenteEditorViewModel : ObservableObject
                     FechaUltimoCambio = FechaUltimoCambio,
                     IdTipoComponente = IdTipoComponente,
                     IdEstado = IdEstado,
+                    IdProveedor = proveedor?.IdProveedor,
                     Activo = true
                 });
             }
@@ -99,6 +110,7 @@ public partial class ComponenteEditorViewModel : ObservableObject
                     comp.FechaUltimoCambio = FechaUltimoCambio;
                     comp.IdTipoComponente = IdTipoComponente;
                     comp.IdEstado = IdEstado;
+                    comp.IdProveedor = proveedor?.IdProveedor;
                     await _componenteService.UpdateAsync(comp);
                 }
             }

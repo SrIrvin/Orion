@@ -22,6 +22,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
     public DbSet<TipoMantenimiento> TiposMantenimiento { get; set; } = null!;
     public DbSet<EstadoSolicitud> EstadosSolicitudes { get; set; } = null!;
     public DbSet<Usuario> Usuarios { get; set; } = null!;
+    public DbSet<Proveedor> Proveedores { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -243,6 +244,27 @@ public class OrionDbContext : DbContext, IOrionDbContext
 
             entity.HasIndex(e => e.NombreUsuario).IsUnique();
         });
+
+        // 13. Proveedor
+        modelBuilder.Entity<Proveedor>(entity =>
+        {
+            entity.ToTable("Proveedor");
+            entity.HasKey(e => e.IdProveedor);
+            entity.Property(e => e.IdProveedor).HasColumnName("ID_Proveedor").UseSerialColumn();
+            entity.Property(e => e.Nombre).HasColumnName("Nombre").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.RUC).HasColumnName("RUC").HasMaxLength(20);
+            entity.Property(e => e.Telefono).HasColumnName("Telefono").HasMaxLength(20);
+            entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(100);
+            entity.Property(e => e.Direccion).HasColumnName("Direccion").HasMaxLength(200);
+            entity.Property(e => e.Activo).HasColumnName("Activo").HasDefaultValue(true);
+        });
+
+        // Relación Componente -> Proveedor
+        modelBuilder.Entity<Componente>()
+            .HasOne(c => c.Proveedor)
+            .WithMany(p => p.Componentes)
+            .HasForeignKey(c => c.IdProveedor)
+            .HasConstraintName("FK_Componente_Proveedor");
 
         // =====================================================
         // SEED DATA (Datos iniciales de catálogos)

@@ -22,6 +22,7 @@ public class ComponenteService : IComponenteService
             .Where(c => c.IdMaquinaria == maquinariaId)
             .Include(c => c.TipoComponente)
             .Include(c => c.EstadoComponente)
+            .Include(c => c.Proveedor)
             .AsQueryable();
 
         if (!includeInactive)
@@ -44,6 +45,8 @@ public class ComponenteService : IComponenteService
             TipoComponenteNombre = c.TipoComponente.NombreTipo,
             IdEstado = c.IdEstado,
             EstadoDescripcion = c.EstadoComponente.DescripcionEstado,
+            IdProveedor = c.IdProveedor,
+            ProveedorNombre = c.Proveedor?.Nombre,
             Activo = c.Activo
         });
     }

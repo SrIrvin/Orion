@@ -59,6 +59,7 @@
                 <DataGridTextColumn Header="NOMBRE" Binding="{Binding NombreComponente}" Width="*"/>
                 <DataGridTextColumn Header="TIPO" Binding="{Binding TipoComponenteNombre}"/>
                 <DataGridTextColumn Header="ESTADO" Binding="{Binding EstadoDescripcion}"/>
+                <DataGridTextColumn Header="PROVEEDOR" Binding="{Binding ProveedorNombre}" Width="*"/>
                 <DataGridTextColumn Header="ACTIVO" Binding="{Binding Activo}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">

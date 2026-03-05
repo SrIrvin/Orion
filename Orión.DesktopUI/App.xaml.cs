@@ -64,6 +64,7 @@ public partial class App : System.Windows.Application
                 services.AddScoped<ITecnicoService, TecnicoService>();
                 services.AddScoped<IUsuarioService, UsuarioService>();
                 services.AddScoped<ISolicitudServicioService, SolicitudServicioService>();
+                services.AddScoped<IProveedorService, ProveedorService>();
                 services.AddScoped<IReportService, ReportService>();
                 services.AddScoped<IDashboardService, DashboardService>();
 
@@ -75,6 +76,7 @@ public partial class App : System.Windows.Application
                 services.AddTransient<TecnicoViewModel>();
                 services.AddTransient<UsuarioViewModel>();
                 services.AddTransient<SolicitudViewModel>();
+                services.AddTransient<ProveedorViewModel>();
                 services.AddTransient<DashboardViewModel>();
 
                 // Views
@@ -86,6 +88,7 @@ public partial class App : System.Windows.Application
                 services.AddTransient<TecnicoListView>();
                 services.AddTransient<UsuarioListView>();
                 services.AddTransient<SolicitudListView>();
+                services.AddTransient<ProveedorListView>();
             })
             .Build();
 

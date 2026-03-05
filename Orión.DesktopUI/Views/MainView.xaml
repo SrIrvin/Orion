@@ -92,6 +92,16 @@
                         </ListBoxItem>
 
                         <ListBoxItem Foreground="White" Height="48">
+                            <ListBoxItem.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToProveedoresCommand}"/>
+                            </ListBoxItem.InputBindings>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="TruckDelivery" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
+                                <TextBlock Text="Proveedores" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Foreground="White" Height="48">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="FileDocument" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
                                 <TextBlock Text="Reportes" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
