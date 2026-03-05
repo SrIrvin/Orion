@@ -1,6 +1,6 @@
 namespace Orión.Domain.Entities;
 
-public class SolicitudServicio
+public class SolicitudServicio : BaseEntity
 {
     public int IdSS { get; set; }
     public string DescripcionFalla { get; set; } = string.Empty;

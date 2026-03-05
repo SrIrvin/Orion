@@ -45,7 +45,6 @@ public class AuthService : IAuthService
             PasswordHash = BC.HashPassword(password),
             Email = email,
             Rol = rol,
-            FechaCreacion = DateTime.UtcNow,
             Activo = true
         };
 

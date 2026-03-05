@@ -27,7 +27,7 @@ public class UsuarioService : IUsuarioService
             Email = u.Email,
             Rol = u.Rol,
             Activo = u.Activo,
-            FechaCreacion = u.FechaCreacion
+            CreatedAt = u.CreatedAt
         });
     }
 
@@ -39,7 +39,6 @@ public class UsuarioService : IUsuarioService
     public async Task CreateAsync(Usuario usuario, string password)
     {
         usuario.PasswordHash = BC.HashPassword(password);
-        usuario.FechaCreacion = DateTime.UtcNow;
         usuario.Activo = true;
 
         await _repository.AddAsync(usuario);

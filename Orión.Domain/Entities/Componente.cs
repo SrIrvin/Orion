@@ -1,6 +1,6 @@
 namespace Orión.Domain.Entities;
 
-public class Componente
+public class Componente : BaseEntity
 {
     public string IdComponente { get; set; } = string.Empty;
     public string NombreComponente { get; set; } = string.Empty;

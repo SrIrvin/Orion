@@ -11,6 +11,24 @@ public static class DbInitializer
         // Asegura que la base de datos existe y aplica todas las migraciones pendientes de forma nativa
         context.Database.Migrate();
 
+        // 0. Asegurar Catálogos Básicos (Ubicaciones y Tipos de Componentes)
+        if (!context.Ubicaciones.Any())
+        {
+            context.Ubicaciones.Add(new Ubicacion { NumeroNave = 1 });
+            context.SaveChanges();
+        }
+
+        if (!context.TiposComponentes.Any())
+        {
+            context.TiposComponentes.AddRange(
+                new TipoComponente { NombreTipo = "Motor" },
+                new TipoComponente { NombreTipo = "Bomba" },
+                new TipoComponente { NombreTipo = "Sensor" },
+                new TipoComponente { NombreTipo = "Valvula" }
+            );
+            context.SaveChanges();
+        }
+
         // 1. Crear usuarios por defecto
         if (!context.Usuarios.Any(u => u.NombreUsuario == "admin"))
         {
@@ -20,7 +38,6 @@ public static class DbInitializer
                 PasswordHash = BC.HashPassword("admin123"),
                 Email = "admin@orion.com",
                 Rol = "Admin",
-                FechaCreacion = DateTime.UtcNow,
                 Activo = true
             });
         }
@@ -33,29 +50,21 @@ public static class DbInitializer
                 PasswordHash = BC.HashPassword("user123"),
                 Email = "operador@orion.com",
                 Rol = "Operador",
-                FechaCreacion = DateTime.UtcNow,
                 Activo = true
             });
         }
         context.SaveChanges();
 
-        // 2. Asegurar Ubicaciones (Nave 1 es fundamental para el seed)
-        if (!context.Ubicaciones.Any(u => u.NumeroNave == 1))
-        {
-            context.Ubicaciones.Add(new Ubicacion { NumeroNave = 1 });
-            context.SaveChanges();
-        }
-
-        // 3. Datos de prueba para Maquinaria
+        // 2. Datos de prueba para Maquinaria
         if (!context.Maquinarias.Any())
         {
-            var ubicacionId = context.Ubicaciones.First(u => u.NumeroNave == 1).IdUbicacion;
+            var ubicacionId = context.Ubicaciones.First().IdUbicacion;
 
             context.Maquinarias.AddRange(
                 new Maquinaria
                 {
                     IdMaquinaria = "MAQ-001",
-                    NombreMaquina = "Prensa Hidr 50T",
+                    NombreMaquina = "Prensa Hidráulica 50T",
                     Tipo = "Prensa",
                     Marca = "HydraForce",
                     Modelo = "HF-50",
@@ -66,7 +75,7 @@ public static class DbInitializer
                 new Maquinaria
                 {
                     IdMaquinaria = "MAQ-002",
-                    NombreMaquina = "Torno CNC Quick",
+                    NombreMaquina = "Torno CNC Quick Turn",
                     Tipo = "Torno",
                     Marca = "Mazak",
                     Modelo = "Quick Turn 250",
@@ -78,7 +87,7 @@ public static class DbInitializer
             context.SaveChanges();
         }
 
-        // 4. Datos de prueba para Personal Técnico
+        // 3. Datos de prueba para Personal Técnico
         if (!context.Tecnicos.Any())
         {
             context.Tecnicos.AddRange(
@@ -86,6 +95,26 @@ public static class DbInitializer
                 new Tecnico { IdPersonal = 102, NombreApellido = "Ing. Maria García", Especialidad = "Electrónica", IdTurno = 2, Activo = true },
                 new Tecnico { IdPersonal = 103, NombreApellido = "Pedro López", Especialidad = "Soldador", IdTurno = 3, Activo = true }
             );
+            context.SaveChanges();
+        }
+
+        // 4. Datos de prueba para Componentes
+        if (!context.Componentes.Any())
+        {
+            var maq = context.Maquinarias.First();
+            var tipo = context.TiposComponentes.First();
+
+            context.Componentes.Add(new Componente
+            {
+                IdComponente = $"COMP-{maq.IdMaquinaria}-01",
+                IdMaquinaria = maq.IdMaquinaria,
+                NombreComponente = "Motor Principal de Inducción",
+                IdTipoComponente = tipo.IdTipoComponente,
+                Marca = "Siemens",
+                NumeroSerie = $"SN-{maq.IdMaquinaria}-MP",
+                IdEstado = 1,
+                Activo = true
+            });
             context.SaveChanges();
         }
     }

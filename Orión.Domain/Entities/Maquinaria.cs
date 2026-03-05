@@ -1,6 +1,6 @@
 namespace Orión.Domain.Entities;
 
-public class Maquinaria
+public class Maquinaria : BaseEntity
 {
     public string IdMaquinaria { get; set; } = string.Empty;
     public string NombreMaquina { get; set; } = string.Empty;

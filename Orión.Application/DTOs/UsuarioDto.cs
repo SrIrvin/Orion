@@ -7,5 +7,5 @@ public class UsuarioDto
     public string? Email { get; set; }
     public string Rol { get; set; } = string.Empty;
     public bool Activo { get; set; }
-    public DateTime FechaCreacion { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Orión.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Orión.Infrastructure.Persistence;
 namespace Orión.Infrastructure.Migrations
 {
     [DbContext(typeof(OrionDbContext))]
-    partial class OrionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260305042530_AddAuditFields")]
+    partial class AddAuditFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,8 +56,8 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("IdMaquinaria")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
                         .HasColumnName("ID_Maquinaria");
 
                     b.Property<int>("IdTipoComponente")
@@ -68,8 +71,8 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("NombreComponente")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
                         .HasColumnName("Nombre_Componente");
 
                     b.Property<string>("NumeroSerie")
@@ -99,8 +102,8 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("DescripcionEstado")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
                         .HasColumnName("Descripcion_Estado");
 
                     b.HasKey("IdEstado");
@@ -183,8 +186,8 @@ namespace Orión.Infrastructure.Migrations
             modelBuilder.Entity("Orión.Domain.Entities.Maquinaria", b =>
                 {
                     b.Property<string>("IdMaquinaria")
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
                         .HasColumnName("ID_Maquinaria");
 
                     b.Property<bool>("Activo")
@@ -220,8 +223,8 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("NombreMaquina")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
                         .HasColumnName("Nombre_Maquina");
 
                     b.Property<string>("Tipo")
@@ -394,8 +397,8 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("NombreTipo")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
                         .HasColumnName("Nombre_Tipo");
 
                     b.HasKey("IdTipoComponente");

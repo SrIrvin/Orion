@@ -1,6 +1,6 @@
 namespace Orión.Domain.Entities;
 
-public class Tecnico
+public class Tecnico : BaseEntity
 {
     public int IdPersonal { get; set; }
     public string NombreApellido { get; set; } = string.Empty;

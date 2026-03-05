@@ -29,6 +29,23 @@ public class OrionDbContext : DbContext, IOrionDbContext
         // Se inyecta a través de DbContextOptions en App.xaml.cs
     }
 
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+                    break;
+            }
+        }
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // 1. NivelCritico
@@ -57,7 +74,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
             entity.ToTable("TipoComponente");
             entity.HasKey(e => e.IdTipoComponente);
             entity.Property(e => e.IdTipoComponente).HasColumnName("ID_TipoComponente").UseSerialColumn();
-            entity.Property(e => e.NombreTipo).HasColumnName("Nombre_Tipo").HasMaxLength(30).IsRequired();
+            entity.Property(e => e.NombreTipo).HasColumnName("Nombre_Tipo").HasMaxLength(100).IsRequired();
             entity.HasIndex(e => e.NombreTipo).IsUnique();
         });
 
@@ -67,7 +84,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
             entity.ToTable("EstadoComponente");
             entity.HasKey(e => e.IdEstado);
             entity.Property(e => e.IdEstado).HasColumnName("ID_Estado").ValueGeneratedNever();
-            entity.Property(e => e.DescripcionEstado).HasColumnName("Descripcion_Estado").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.DescripcionEstado).HasColumnName("Descripcion_Estado").HasMaxLength(50).IsRequired();
             entity.HasIndex(e => e.DescripcionEstado).IsUnique();
         });
 
@@ -106,8 +123,8 @@ public class OrionDbContext : DbContext, IOrionDbContext
         {
             entity.ToTable("Maquinaria");
             entity.HasKey(e => e.IdMaquinaria);
-            entity.Property(e => e.IdMaquinaria).HasColumnName("ID_Maquinaria").HasMaxLength(15);
-            entity.Property(e => e.NombreMaquina).HasColumnName("Nombre_Maquina").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.IdMaquinaria).HasColumnName("ID_Maquinaria").HasMaxLength(30);
+            entity.Property(e => e.NombreMaquina).HasColumnName("Nombre_Maquina").HasMaxLength(100).IsRequired();
             entity.Property(e => e.Tipo).HasColumnName("Tipo").HasMaxLength(50);
             entity.Property(e => e.Marca).HasColumnName("Marca").HasMaxLength(50);
             entity.Property(e => e.Modelo).HasColumnName("Modelo").HasMaxLength(50);
@@ -150,8 +167,8 @@ public class OrionDbContext : DbContext, IOrionDbContext
             entity.ToTable("Componente");
             entity.HasKey(e => e.IdComponente);
             entity.Property(e => e.IdComponente).HasColumnName("ID_Componente").HasMaxLength(30);
-            entity.Property(e => e.IdMaquinaria).HasColumnName("ID_Maquinaria").HasMaxLength(15).IsRequired();
-            entity.Property(e => e.NombreComponente).HasColumnName("Nombre_Componente").HasMaxLength(20).IsRequired();
+            entity.Property(e => e.IdMaquinaria).HasColumnName("ID_Maquinaria").HasMaxLength(30).IsRequired();
+            entity.Property(e => e.NombreComponente).HasColumnName("Nombre_Componente").HasMaxLength(100).IsRequired();
             entity.Property(e => e.IdTipoComponente).HasColumnName("ID_TipoComponente");
             entity.Property(e => e.Marca).HasColumnName("Marca").HasMaxLength(50);
             entity.Property(e => e.NumeroSerie).HasColumnName("Numero_Serie").HasMaxLength(50);
@@ -221,7 +238,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
             entity.Property(e => e.PasswordHash).HasColumnName("Password_Hash").IsRequired();
             entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(100);
             entity.Property(e => e.Rol).HasColumnName("Rol").HasMaxLength(20).IsRequired();
-            entity.Property(e => e.FechaCreacion).HasColumnName("Fecha_Creacion").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.CreatedAt).HasColumnName("Fecha_Creacion").HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.Activo).HasColumnName("Activo").HasDefaultValue(true);
 
             entity.HasIndex(e => e.NombreUsuario).IsUnique();
