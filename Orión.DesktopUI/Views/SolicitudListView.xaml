@@ -14,35 +14,46 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Cabecera -->
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-            <TextBlock Text="CONTROL DE SOLICITUDES" Style="{StaticResource MaterialDesignHeadline5TextBlock}" VerticalAlignment="Center"/>
-            
-            <TextBox Width="250" Margin="32,0,0,0"
-                     materialDesign:HintAssist.Hint="Buscar solicitud..."
-                     materialDesign:TextFieldAssist.HasClearButton="True"
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding LoadDataCommand}"/>
-                </TextBox.InputBindings>
-            </TextBox>
-
-            <Button Command="{Binding ShowFormCommand}" Style="{StaticResource MaterialDesignRaisedButton}" 
-                    Background="{StaticResource SecondaryBrush}" BorderBrush="{StaticResource SecondaryBrush}"
-                    Margin="24,0,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock Text="NUEVA SOLICITUD"/>
+        <!-- HEADER CARD -->
+        <materialDesign:Card Padding="16" Margin="0,0,0,16">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <materialDesign:PackIcon Kind="HammerWrench" Width="32" Height="32" VerticalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="CONTROL DE SOLICITUDES" Style="{StaticResource MaterialDesignHeadline5TextBlock}" Margin="16,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
                 </StackPanel>
-            </Button>
-        </StackPanel>
 
-        <!-- Formulario (Condicional) -->
-        <materialDesign:Card Grid.Row="1" Margin="0,0,0,24" Padding="16"
-                             Visibility="{Binding IsFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <TextBox Width="250" Margin="0,0,16,0"
+                             materialDesign:HintAssist.Hint="Buscar solicitud..."
+                             materialDesign:TextFieldAssist.HasClearButton="True"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding LoadDataCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+
+                    <Button Command="{Binding LoadDataCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,8,0" ToolTip="Actualizar">
+                        <materialDesign:PackIcon Kind="Refresh"/>
+                    </Button>
+
+                    <Button Command="{Binding ShowFormCommand}" 
+                            Style="{StaticResource MaterialDesignRaisedButton}" Width="150" ToolTip="Registrar Nueva Solicitud">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" Margin="0,0,8,0"/>
+                            <TextBlock Text="NUEVA SS"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:Card>
+
+        <!-- FORMULARIO (Condicional) -->
+        <materialDesign:Card Grid.Row="1" Margin="0,0,0,24" Padding="24"
+                             Visibility="{Binding IsFormVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             materialDesign:ElevationAssist.Elevation="Dp4">
             <StackPanel>
-                <TextBlock Text="REGISTRAR FALLA" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Margin="0,0,0,16" FontWeight="Bold"/>
+                <TextBlock Text="REGISTRAR NUEVA FALLA" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,20" Foreground="{StaticResource PrimaryBrush}"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -57,7 +68,7 @@
                                   DisplayMemberPath="NombreMaquina"
                                   Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,16,0">
+                    <StackPanel Grid.Column="1" Margin="0,0,16,0">
                         <ComboBox materialDesign:HintAssist.Hint="Tipo Mantenimiento"
                                   ItemsSource="{Binding TiposMantenimiento}"
                                   SelectedValue="{Binding SelectedTipoManttoId}"
@@ -65,54 +76,57 @@
                                   DisplayMemberPath="DescripcionTipo"
                                   Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="2">
-                        <TextBox materialDesign:HintAssist.Hint="Descripción de la Falla"
+                    <StackPanel Grid.Column="2">
+                        <TextBox materialDesign:HintAssist.Hint="Descripción Detallada de la Falla"
                                  Text="{Binding DescripcionFalla}"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
                     </StackPanel>
                 </Grid>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-                    <Button Content="CANCELAR" Command="{Binding HideFormCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,8,0"/>
-                    <Button Content="GUARDAR" Command="{Binding SaveSolicitudCommand}" Style="{StaticResource MaterialDesignRaisedButton}"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
+                    <Button Content="CANCELAR" Command="{Binding HideFormCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,12,0"/>
+                    <Button Content="GUARDAR SOLICITUD" Command="{Binding SaveSolicitudCommand}" Style="{StaticResource MaterialDesignRaisedButton}"/>
                 </StackPanel>
             </StackPanel>
         </materialDesign:Card>
 
-        <ProgressBar Grid.Row="2" IsIndeterminate="True" VerticalAlignment="Top" Panel.ZIndex="1"
-                     Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <!-- CONTENT CARD -->
+        <materialDesign:Card Grid.Row="2" materialDesign:ElevationAssist.Elevation="Dp2">
+            <Grid>
+                <ProgressBar IsIndeterminate="True" VerticalAlignment="Top" Panel.ZIndex="1"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-        <!-- Listado -->
-        <DataGrid Grid.Row="2" ItemsSource="{Binding Solicitudes}" AutoGenerateColumns="False" IsReadOnly="True"
-                  Style="{StaticResource MaterialDesignDataGrid}"
-                  materialDesign:DataGridAssist.CellPadding="13 8 8 8"
-                  materialDesign:DataGridAssist.ColumnHeaderPadding="8">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding IdSS}"/>
-                <DataGridTextColumn Header="MÁQUINA" Binding="{Binding NombreMaquinaria}"/>
-                <DataGridTextColumn Header="FALLA" Binding="{Binding DescripcionFalla}" Width="*"/>
-                <DataGridTextColumn Header="APERTURA" Binding="{Binding FechaApertura, StringFormat=g}"/>
-                <DataGridTextColumn Header="TIPO" Binding="{Binding TipoMantenimientoDescripcion}"/>
-                <DataGridTextColumn Header="TÉCNICO" Binding="{Binding TecnicoNombre}"/>
-                <DataGridTemplateColumn Header="ESTADO">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <materialDesign:Chip Content="{Binding EstadoDescripcion}" 
-                                                 Background="{StaticResource PrimaryBrush}" Foreground="White"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGrid ItemsSource="{Binding Solicitudes}" AutoGenerateColumns="False" IsReadOnly="True"
+                          Style="{StaticResource MaterialDesignDataGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding IdSS}" Width="Auto"/>
+                        <DataGridTextColumn Header="MÁQUINA" Binding="{Binding NombreMaquinaria}" Width="Auto"/>
+                        <DataGridTextColumn Header="FALLA" Binding="{Binding DescripcionFalla}" Width="*"/>
+                        <DataGridTextColumn Header="APERTURA" Binding="{Binding FechaApertura, StringFormat=g}" Width="Auto"/>
+                        <DataGridTextColumn Header="TIPO" Binding="{Binding TipoMantenimientoDescripcion}" Width="Auto"/>
+                        <DataGridTextColumn Header="TÉCNICO" Binding="{Binding TecnicoNombre}" Width="Auto"/>
+                        
+                        <DataGridTemplateColumn Header="ESTADO" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <materialDesign:Chip Content="{Binding EstadoDescripcion}" 
+                                                         Background="{StaticResource PrimaryBrush}" 
+                                                         Foreground="White"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="ACCIONES">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="REPORTE" Style="{StaticResource MaterialDesignFlatButton}" 
-                                    Command="{Binding DataContext.GenerateReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+                        <DataGridTemplateColumn Header="ACCIONES" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="PDF" Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                            Command="{Binding DataContext.GenerateReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" Height="25" Padding="8,0"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </materialDesign:Card>
     </Grid>
 </UserControl>
-

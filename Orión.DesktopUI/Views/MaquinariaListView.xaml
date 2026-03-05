@@ -16,94 +16,101 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-            <TextBlock Text="GESTIÓN DE MAQUINARIA" Style="{StaticResource MaterialDesignHeadline5TextBlock}" VerticalAlignment="Center"/>
-            <Button Command="{Binding LoadMaquinariasCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
-                <materialDesign:PackIcon Kind="Refresh"/>
-            </Button>
-
-            <TextBox Width="250" Margin="32,0,0,0"
-                     materialDesign:HintAssist.Hint="Buscar maquinaria..."
-                     materialDesign:TextFieldAssist.HasClearButton="True"
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding LoadMaquinariasCommand}"/>
-                </TextBox.InputBindings>
-            </TextBox>
-
-            <Button Command="{Binding CreateMaquinariaCommand}" 
-                    Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0" ToolTip="Registrar Nueva Maquinaria">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Plus" Margin="0,0,8,0"/>
-                    <TextBlock Text="NUEVA"/>
+        <materialDesign:Card Padding="16" Margin="0,0,0,16">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <materialDesign:PackIcon Kind="Engine" Width="32" Height="32" VerticalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="GESTIÓN DE MAQUINARIA" Style="{StaticResource MaterialDesignHeadline5TextBlock}" Margin="16,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
                 </StackPanel>
-            </Button>
-        </StackPanel>
 
-        <ProgressBar Grid.Row="1" IsIndeterminate="True" VerticalAlignment="Top" 
-                     Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <TextBox Width="250" Margin="0,0,16,0"
+                             materialDesign:HintAssist.Hint="Buscar maquinaria..."
+                             materialDesign:TextFieldAssist.HasClearButton="True"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding LoadMaquinariasCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Maquinarias}" SelectedItem="{Binding SelectedMaquinaria}" 
-                  AutoGenerateColumns="False" IsReadOnly="True"
-                  Style="{StaticResource MaterialDesignDataGrid}"
-                  materialDesign:DataGridAssist.CellPadding="13 8 8 8"
-                  materialDesign:DataGridAssist.ColumnHeaderPadding="8">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding IdMaquinaria}"/>
-                <DataGridTextColumn Header="NOMBRE" Binding="{Binding NombreMaquina}" Width="*"/>
-                <DataGridTextColumn Header="TIPO" Binding="{Binding Tipo}"/>
-                <DataGridTextColumn Header="CRITICIDAD" Binding="{Binding NivelCriticoDescripcion}"/>
-                <DataGridTextColumn Header="UBICACIÓN" Binding="{Binding UbicacionNave}"/>
-                <DataGridTextColumn Header="ESTADO" Binding="{Binding Activo}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Text" Value="Activa"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Activo}" Value="False">
-                                    <Setter Property="Text" Value="Inactiva"/>
-                                    <Setter Property="Foreground" Value="Red"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                    <Button Command="{Binding LoadMaquinariasCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,8,0" ToolTip="Actualizar">
+                        <materialDesign:PackIcon Kind="Refresh"/>
+                    </Button>
 
-                <DataGridTemplateColumn Header="ACCIONES">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="VER" Style="{StaticResource MaterialDesignFlatButton}" 
-                                        Command="{Binding DataContext.NavigateToComponentesCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                        CommandParameter="{Binding IdMaquinaria}" ToolTip="Ver Componentes"/>
-                                
-                                <StackPanel Orientation="Horizontal" Visibility="{Binding DataContext.IsAdmin, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <Button Command="{Binding DataContext.EditMaquinariaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                            Style="{StaticResource MaterialDesignIconButton}" ToolTip="Editar">
-                                        <materialDesign:PackIcon Kind="Edit"/>
-                                    </Button>
-                                    <Button Command="{Binding DataContext.ToggleStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                            Style="{StaticResource MaterialDesignIconButton}" ToolTip="Habilitar/Deshabilitar">
-                                        <materialDesign:PackIcon>
-                                            <materialDesign:PackIcon.Style>
-                                                <Style TargetType="materialDesign:PackIcon">
-                                                    <Setter Property="Kind" Value="Delete"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Activo}" Value="False">
-                                                            <Setter Property="Kind" Value="Restore"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </materialDesign:PackIcon.Style>
-                                        </materialDesign:PackIcon>
-                                    </Button>
-                                </StackPanel>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+                    <Button Command="{Binding CreateMaquinariaCommand}" 
+                            Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Style="{StaticResource MaterialDesignRaisedButton}" Width="120" ToolTip="Registrar Nueva Maquinaria">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" Margin="0,0,8,0"/>
+                            <TextBlock Text="NUEVA"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:Card>
+
+        <materialDesign:Card Grid.Row="1" materialDesign:ElevationAssist.Elevation="Dp2">
+            <Grid>
+                <ProgressBar IsIndeterminate="True" VerticalAlignment="Top" Panel.ZIndex="1"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <DataGrid ItemsSource="{Binding Maquinarias}" SelectedItem="{Binding SelectedMaquinaria}" 
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Style="{StaticResource MaterialDesignDataGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding IdMaquinaria}" Width="Auto"/>
+                        <DataGridTextColumn Header="NOMBRE" Binding="{Binding NombreMaquina}" Width="*"/>
+                        <DataGridTextColumn Header="TIPO" Binding="{Binding Tipo}" Width="Auto"/>
+                        <DataGridTextColumn Header="CRITICIDAD" Binding="{Binding NivelCriticoDescripcion}" Width="Auto"/>
+                        <DataGridTextColumn Header="UBICACIÓN" Binding="{Binding UbicacionNave}" Width="Auto"/>
+                        
+                        <DataGridTemplateColumn Header="ESTADO" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <materialDesign:Chip Content="{Binding Activo, Converter={StaticResource BooleanToStatusConverter}}" 
+                                                         Background="{Binding Activo, Converter={StaticResource StatusToBrushConverter}}" 
+                                                         Foreground="White"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ACCIONES" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="VER" Style="{StaticResource MaterialDesignFlatButton}" 
+                                                Command="{Binding DataContext.NavigateToComponentesCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding IdMaquinaria}" ToolTip="Ver Componentes" Height="25" Padding="8,0"/>
+                                        
+                                        <StackPanel Orientation="Horizontal" Visibility="{Binding DataContext.IsAdmin, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <Button Command="{Binding DataContext.EditMaquinariaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                    Style="{StaticResource MaterialDesignIconButton}" ToolTip="Editar" Width="30" Height="30">
+                                                <materialDesign:PackIcon Kind="Edit" Width="18" Height="18"/>
+                                            </Button>
+                                            <Button Command="{Binding DataContext.ToggleStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                    Style="{StaticResource MaterialDesignIconButton}" ToolTip="Habilitar/Deshabilitar" Width="30" Height="30">
+                                                <materialDesign:PackIcon Width="18" Height="18">
+                                                    <materialDesign:PackIcon.Style>
+                                                        <Style TargetType="materialDesign:PackIcon">
+                                                            <Setter Property="Kind" Value="Delete"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Activo}" Value="False">
+                                                                    <Setter Property="Kind" Value="Restore"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </materialDesign:PackIcon.Style>
+                                                </materialDesign:PackIcon>
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </materialDesign:Card>
     </Grid>
 </UserControl>

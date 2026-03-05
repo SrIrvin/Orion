@@ -16,87 +16,96 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-            <TextBlock Text="GESTIÓN DE PERSONAL TÉCNICO" Style="{StaticResource MaterialDesignHeadline5TextBlock}" VerticalAlignment="Center"/>
-            <Button Command="{Binding LoadTecnicosCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
-                <materialDesign:PackIcon Kind="Refresh"/>
-            </Button>
-            
-            <TextBox Width="250" Margin="32,0,0,0"
-                     materialDesign:HintAssist.Hint="Buscar técnico..."
-                     materialDesign:TextFieldAssist.HasClearButton="True"
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding LoadTecnicosCommand}"/>
-                </TextBox.InputBindings>
-            </TextBox>
-
-            <Button Command="{Binding CreateTecnicoCommand}" 
-                    Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0" ToolTip="Registrar Nuevo Técnico">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="AccountPlus" Margin="0,0,8,0"/>
-                    <TextBlock Text="NUEVO"/>
+        <!-- HEADER CARD -->
+        <materialDesign:Card Padding="16" Margin="0,0,0,16">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <materialDesign:PackIcon Kind="AccountGroup" Width="32" Height="32" VerticalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="GESTIÓN DE PERSONAL TÉCNICO" Style="{StaticResource MaterialDesignHeadline5TextBlock}" Margin="16,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
                 </StackPanel>
-            </Button>
-        </StackPanel>
 
-        <ProgressBar Grid.Row="1" IsIndeterminate="True" VerticalAlignment="Top" 
-                     Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <TextBox Width="250" Margin="0,0,16,0"
+                             materialDesign:HintAssist.Hint="Buscar técnico..."
+                             materialDesign:TextFieldAssist.HasClearButton="True"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding LoadTecnicosCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Tecnicos}" SelectedItem="{Binding SelectedTecnico}" 
-                  AutoGenerateColumns="False" IsReadOnly="True"
-                  Style="{StaticResource MaterialDesignDataGrid}"
-                  materialDesign:DataGridAssist.CellPadding="13 8 8 8"
-                  materialDesign:DataGridAssist.ColumnHeaderPadding="8">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID PERSONAL" Binding="{Binding IdPersonal}"/>
-                <DataGridTextColumn Header="NOMBRE Y APELLIDO" Binding="{Binding NombreApellido}" Width="*"/>
-                <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}"/>
-                <DataGridTextColumn Header="TURNO ASIGNADO" Binding="{Binding TurnoDescripcion}"/>
-                <DataGridTextColumn Header="ESTADO" Binding="{Binding Activo, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Estado'}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Text" Value="Activo"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Activo}" Value="False">
-                                    <Setter Property="Text" Value="Inactivo"/>
-                                    <Setter Property="Foreground" Value="Red"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTemplateColumn Header="ACCIONES" Visibility="{Binding DataContext.IsAdmin, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Command="{Binding DataContext.EditTecnicoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Editar">
-                                    <materialDesign:PackIcon Kind="Edit"/>
-                                </Button>
-                                <Button Command="{Binding DataContext.ToggleStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Cambiar Estado">
-                                    <materialDesign:PackIcon Kind="{Binding Activo, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Icon'}">
-                                        <materialDesign:PackIcon.Style>
-                                            <Style TargetType="materialDesign:PackIcon">
-                                                <Setter Property="Kind" Value="Delete"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Activo}" Value="False">
-                                                        <Setter Property="Kind" Value="Restore"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </materialDesign:PackIcon.Style>
-                                    </materialDesign:PackIcon>
-                                </Button>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+                    <Button Command="{Binding LoadTecnicosCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,8,0" ToolTip="Actualizar">
+                        <materialDesign:PackIcon Kind="Refresh"/>
+                    </Button>
+
+                    <Button Command="{Binding CreateTecnicoCommand}" 
+                            Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Style="{StaticResource MaterialDesignRaisedButton}" Width="120" ToolTip="Registrar Nuevo Técnico">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="AccountPlus" Margin="0,0,8,0"/>
+                            <TextBlock Text="NUEVA"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:Card>
+
+        <!-- CONTENT CARD -->
+        <materialDesign:Card Grid.Row="1" materialDesign:ElevationAssist.Elevation="Dp2">
+            <Grid>
+                <ProgressBar IsIndeterminate="True" VerticalAlignment="Top" Panel.ZIndex="1"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <DataGrid ItemsSource="{Binding Tecnicos}" SelectedItem="{Binding SelectedTecnico}" 
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Style="{StaticResource MaterialDesignDataGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID PERSONAL" Binding="{Binding IdPersonal}" Width="Auto"/>
+                        <DataGridTextColumn Header="NOMBRE Y APELLIDO" Binding="{Binding NombreApellido}" Width="*"/>
+                        <DataGridTextColumn Header="ESPECIALIDAD" Binding="{Binding Especialidad}" Width="Auto"/>
+                        <DataGridTextColumn Header="TURNO ASIGNADO" Binding="{Binding TurnoDescripcion}" Width="Auto"/>
+                        
+                        <DataGridTemplateColumn Header="ESTADO" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <materialDesign:Chip Content="{Binding Activo, Converter={StaticResource BooleanToStatusConverter}}" 
+                                                         Background="{Binding Activo, Converter={StaticResource StatusToBrushConverter}}" 
+                                                         Foreground="White"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ACCIONES" Width="Auto" Visibility="{Binding DataContext.IsAdmin, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Command="{Binding DataContext.EditTecnicoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                Style="{StaticResource MaterialDesignIconButton}" ToolTip="Editar" Width="30" Height="30">
+                                            <materialDesign:PackIcon Kind="Edit" Width="18" Height="18"/>
+                                        </Button>
+                                        <Button Command="{Binding DataContext.ToggleStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                Style="{StaticResource MaterialDesignIconButton}" ToolTip="Cambiar Estado" Width="30" Height="30">
+                                            <materialDesign:PackIcon Width="18" Height="18">
+                                                <materialDesign:PackIcon.Style>
+                                                    <Style TargetType="materialDesign:PackIcon">
+                                                        <Setter Property="Kind" Value="Delete"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Activo}" Value="False">
+                                                                <Setter Property="Kind" Value="Restore"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </materialDesign:PackIcon.Style>
+                                            </materialDesign:PackIcon>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </materialDesign:Card>
     </Grid>
 </UserControl>
-

@@ -49,6 +49,9 @@ public partial class MainViewModel : ObservableObject
     private void NavigateToProveedores() => _navigationService.NavigateTo<ProveedorListView>();
 
     [RelayCommand]
+    private void NavigateToReportes() => _navigationService.NavigateTo<ReportView>();
+
+    [RelayCommand]
     private void NavigateToComponentes(string maquinariaId)
     {
         _navigationService.NavigateTo<ComponenteListView>(view =>

@@ -1,0 +1,63 @@
+<UserControl x:Class="Orión.DesktopUI.Views.ReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             Style="{StaticResource ViewEntranceAnimation}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER CARD -->
+        <materialDesign:Card Padding="16" Margin="0,0,0,16">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <materialDesign:PackIcon Kind="FileChart" Width="32" Height="32" VerticalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="CENTRO DE REPORTES" Style="{StaticResource MaterialDesignHeadline5TextBlock}" Margin="16,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:Card>
+
+        <!-- CONTENT CARD -->
+        <materialDesign:Card Grid.Row="1" materialDesign:ElevationAssist.Elevation="Dp2" Padding="32">
+            <Grid>
+                <ProgressBar IsIndeterminate="True" VerticalAlignment="Top" Panel.ZIndex="1"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <WrapPanel Orientation="Horizontal">
+                    <!-- REPORTE MAQUINARIA -->
+                    <materialDesign:Card Width="200" Height="200" Margin="0,0,24,24" Padding="16">
+                        <StackPanel VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Engine" Width="48" Height="48" HorizontalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
+                            <TextBlock Text="Inventario de Maquinaria" TextAlignment="Center" TextWrapping="Wrap" FontWeight="Bold" Margin="0,16"/>
+                            <Button Content="GENERAR PDF" Style="{StaticResource MaterialDesignOutlinedButton}" Command="{Binding ExportMaquinariaReportCommand}"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- REPORTE PERSONAL -->
+                    <materialDesign:Card Width="200" Height="200" Margin="0,0,24,24" Padding="16">
+                        <StackPanel VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="AccountGroup" Width="48" Height="48" HorizontalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
+                            <TextBlock Text="Listado de Personal Técnico" TextAlignment="Center" TextWrapping="Wrap" FontWeight="Bold" Margin="0,16"/>
+                            <Button Content="GENERAR PDF" Style="{StaticResource MaterialDesignOutlinedButton}" IsEnabled="False"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- REPORTE SOLICITUDES -->
+                    <materialDesign:Card Width="200" Height="200" Margin="0,0,24,24" Padding="16">
+                        <StackPanel VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="ClipboardList" Width="48" Height="48" HorizontalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
+                            <TextBlock Text="Historial de Solicitudes" TextAlignment="Center" TextWrapping="Wrap" FontWeight="Bold" Margin="0,16"/>
+                            <Button Content="GENERAR PDF" Style="{StaticResource MaterialDesignOutlinedButton}" IsEnabled="False"/>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </WrapPanel>
+            </Grid>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

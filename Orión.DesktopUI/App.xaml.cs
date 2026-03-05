@@ -77,6 +77,7 @@ public partial class App : System.Windows.Application
                 services.AddTransient<UsuarioViewModel>();
                 services.AddTransient<SolicitudViewModel>();
                 services.AddTransient<ProveedorViewModel>();
+                services.AddTransient<ReportViewModel>();
                 services.AddTransient<DashboardViewModel>();
 
                 // Views
@@ -89,6 +90,7 @@ public partial class App : System.Windows.Application
                 services.AddTransient<UsuarioListView>();
                 services.AddTransient<SolicitudListView>();
                 services.AddTransient<ProveedorListView>();
+                services.AddTransient<ReportView>();
             })
             .Build();
 

@@ -16,83 +16,95 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-            <TextBlock Text="ADMINISTRACIÓN DE USUARIOS" Style="{StaticResource MaterialDesignHeadline5TextBlock}" VerticalAlignment="Center"/>
-            <Button Command="{Binding LoadUsuariosCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="16,0,0,0">
-                <materialDesign:PackIcon Kind="Refresh"/>
-            </Button>
-
-            <TextBox Width="250" Margin="32,0,0,0"
-                     materialDesign:HintAssist.Hint="Buscar usuario..."
-                     materialDesign:TextFieldAssist.HasClearButton="True"
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding LoadUsuariosCommand}"/>
-                </TextBox.InputBindings>
-            </TextBox>
-
-            <Button Command="{Binding CreateUsuarioCommand}" Style="{StaticResource MaterialDesignRaisedButton}" Margin="16,0,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="AccountPlus" Margin="0,0,8,0"/>
-                    <TextBlock Text="NUEVO USUARIO"/>
+        <!-- HEADER CARD -->
+        <materialDesign:Card Padding="16" Margin="0,0,0,16">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <materialDesign:PackIcon Kind="ShieldAccount" Width="32" Height="32" VerticalAlignment="Center" Foreground="{StaticResource PrimaryBrush}"/>
+                    <TextBlock Text="ADMINISTRACIÓN DE USUARIOS" Style="{StaticResource MaterialDesignHeadline5TextBlock}" Margin="16,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
                 </StackPanel>
-            </Button>
-        </StackPanel>
 
-        <ProgressBar Grid.Row="1" IsIndeterminate="True" VerticalAlignment="Top" 
-                     Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <TextBox Width="250" Margin="0,0,16,0"
+                             materialDesign:HintAssist.Hint="Buscar usuario..."
+                             materialDesign:TextFieldAssist.HasClearButton="True"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding LoadUsuariosCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Usuarios}" SelectedItem="{Binding SelectedUsuario}" 
-                  AutoGenerateColumns="False" IsReadOnly="True"
-                  Style="{StaticResource MaterialDesignDataGrid}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="USUARIO" Binding="{Binding NombreUsuario}" Width="*"/>
-                <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="*"/>
-                <DataGridTextColumn Header="ROL" Binding="{Binding Rol}"/>
-                <DataGridTextColumn Header="FECHA CREACIÓN" Binding="{Binding FechaCreacion, StringFormat=d}"/>
-                <DataGridTextColumn Header="ESTADO" Binding="{Binding Activo}">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Text" Value="Activo"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Activo}" Value="False">
-                                    <Setter Property="Text" Value="Bloqueado"/>
-                                    <Setter Property="Foreground" Value="Red"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTemplateColumn Header="ACCIONES">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Command="{Binding DataContext.EditUsuarioCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Editar">
-                                    <materialDesign:PackIcon Kind="Edit"/>
-                                </Button>
-                                <Button Command="{Binding DataContext.ToggleStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                        Style="{StaticResource MaterialDesignIconButton}" ToolTip="Bloquear/Desbloquear">
-                                    <materialDesign:PackIcon>
-                                        <materialDesign:PackIcon.Style>
-                                            <Style TargetType="materialDesign:PackIcon">
-                                                <Setter Property="Kind" Value="AccountOff"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Activo}" Value="False">
-                                                        <Setter Property="Kind" Value="AccountCheck"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </materialDesign:PackIcon.Style>
-                                    </materialDesign:PackIcon>
-                                </Button>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+                    <Button Command="{Binding LoadUsuariosCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,8,0" ToolTip="Actualizar">
+                        <materialDesign:PackIcon Kind="Refresh"/>
+                    </Button>
+
+                    <Button Command="{Binding CreateUsuarioCommand}" 
+                            Style="{StaticResource MaterialDesignRaisedButton}" Width="120" ToolTip="Registrar Nuevo Usuario">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="AccountPlus" Margin="0,0,8,0"/>
+                            <TextBlock Text="NUEVO"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </materialDesign:Card>
+
+        <!-- CONTENT CARD -->
+        <materialDesign:Card Grid.Row="1" materialDesign:ElevationAssist.Elevation="Dp2">
+            <Grid>
+                <ProgressBar IsIndeterminate="True" VerticalAlignment="Top" Panel.ZIndex="1"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <DataGrid ItemsSource="{Binding Usuarios}" SelectedItem="{Binding SelectedUsuario}" 
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          Style="{StaticResource MaterialDesignDataGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="USUARIO" Binding="{Binding NombreUsuario}" Width="*"/>
+                        <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="*"/>
+                        <DataGridTextColumn Header="ROL" Binding="{Binding Rol}" Width="Auto"/>
+                        <DataGridTextColumn Header="FECHA REGISTRO" Binding="{Binding CreatedAt, StringFormat=d}" Width="Auto"/>
+                        
+                        <DataGridTemplateColumn Header="ESTADO" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <materialDesign:Chip Content="{Binding Activo, Converter={StaticResource BooleanToStatusConverter}}" 
+                                                         Background="{Binding Activo, Converter={StaticResource StatusToBrushConverter}}" 
+                                                         Foreground="White"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ACCIONES" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Command="{Binding DataContext.EditUsuarioCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                Style="{StaticResource MaterialDesignIconButton}" ToolTip="Editar" Width="30" Height="30">
+                                            <materialDesign:PackIcon Kind="Edit" Width="18" Height="18"/>
+                                        </Button>
+                                        <Button Command="{Binding DataContext.ToggleStatusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                Style="{StaticResource MaterialDesignIconButton}" ToolTip="Cambiar Estado" Width="30" Height="30">
+                                            <materialDesign:PackIcon Width="18" Height="18">
+                                                <materialDesign:PackIcon.Style>
+                                                    <Style TargetType="materialDesign:PackIcon">
+                                                        <Setter Property="Kind" Value="AccountOff"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Activo}" Value="False">
+                                                                <Setter Property="Kind" Value="AccountCheck"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </materialDesign:PackIcon.Style>
+                                            </materialDesign:PackIcon>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </materialDesign:Card>
     </Grid>
 </UserControl>
-

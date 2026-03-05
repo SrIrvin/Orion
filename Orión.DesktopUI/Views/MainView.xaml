@@ -102,6 +102,9 @@
                         </ListBoxItem>
 
                         <ListBoxItem Foreground="White" Height="48">
+                            <ListBoxItem.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateToReportesCommand}"/>
+                            </ListBoxItem.InputBindings>
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="FileDocument" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
                                 <TextBlock Text="Reportes" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
