@@ -73,9 +73,21 @@ public static class StagingSeedData
             context.SaveChanges();
         }
 
-        // 4. Generar Componentes (Asegurar que TODAS las máquinas tengan al menos uno)
+        // 4. Generar Proveedores (Si no hay suficientes)
+        if (context.Proveedores.Count() < 3)
+        {
+            context.Proveedores.AddRange(
+                new Proveedor { Nombre = "Industrial Solutions Corp", RUC = "20123456789", Telefono = "555-0101", Email = "ventas@indsol.com", Direccion = "Av. Industrial 450", Activo = true },
+                new Proveedor { Nombre = "Global Machinery Parts", RUC = "20987654321", Telefono = "555-0202", Email = "contact@globalparts.com", Direccion = "Calle Los Repuestos 123", Activo = true },
+                new Proveedor { Nombre = "Tech & Tools Logistics", RUC = "20555666777", Telefono = "555-0303", Email = "info@techtools.com", Direccion = "Zona Franca Nave 12", Activo = true }
+            );
+            context.SaveChanges();
+        }
+
+        // 5. Generar Componentes (Asegurar que TODAS las máquinas tengan al menos uno)
         var tipos = context.TiposComponentes.ToList();
         var estados = context.EstadosComponentes.ToList();
+        var proveedores = context.Proveedores.ToList();
 
         if (tipos.Any() && estados.Any())
         {
@@ -89,6 +101,8 @@ public static class StagingSeedData
                     for (int i = 1; i <= numComp; i++)
                     {
                         var tipo = tipos[(compCounter + i) % tipos.Count];
+                        var proveedor = proveedores.Any() ? proveedores[(compCounter + i) % proveedores.Count] : null;
+
                         context.Componentes.Add(new Componente
                         {
                             IdComponente = $"C-{maq.IdMaquinaria}-{i:D2}",
@@ -100,6 +114,7 @@ public static class StagingSeedData
                             EspecificacionesTecnicas = $"Especificaciones técnicas del componente {compCounter}",
                             FechaUltimoCambio = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(-i * 15), DateTimeKind.Utc),
                             IdEstado = estados[i % estados.Count].IdEstado,
+                            IdProveedor = proveedor?.IdProveedor,
                             Activo = true
                         });
                     }
