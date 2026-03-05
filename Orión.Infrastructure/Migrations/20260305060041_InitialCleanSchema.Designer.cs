@@ -12,8 +12,8 @@ using Orión.Infrastructure.Persistence;
 namespace Orión.Infrastructure.Migrations
 {
     [DbContext(typeof(OrionDbContext))]
-    [Migration("20260304061951_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260305060041_InitialCleanSchema")]
+    partial class InitialCleanSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,9 @@ namespace Orión.Infrastructure.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("Activo");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("EspecificacionesTecnicas")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
@@ -53,9 +56,12 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("IdMaquinaria")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("character varying(15)")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
                         .HasColumnName("ID_Maquinaria");
+
+                    b.Property<int?>("IdProveedor")
+                        .HasColumnType("integer");
 
                     b.Property<int>("IdTipoComponente")
                         .HasColumnType("integer")
@@ -68,8 +74,8 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("NombreComponente")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("Nombre_Componente");
 
                     b.Property<string>("NumeroSerie")
@@ -77,11 +83,16 @@ namespace Orión.Infrastructure.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("Numero_Serie");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("IdComponente");
 
                     b.HasIndex("IdEstado");
 
                     b.HasIndex("IdMaquinaria");
+
+                    b.HasIndex("IdProveedor");
 
                     b.HasIndex("IdTipoComponente");
 
@@ -96,8 +107,8 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("DescripcionEstado")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("Descripcion_Estado");
 
                     b.HasKey("IdEstado");
@@ -180,8 +191,8 @@ namespace Orión.Infrastructure.Migrations
             modelBuilder.Entity("Orión.Domain.Entities.Maquinaria", b =>
                 {
                     b.Property<string>("IdMaquinaria")
-                        .HasMaxLength(15)
-                        .HasColumnType("character varying(15)")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
                         .HasColumnName("ID_Maquinaria");
 
                     b.Property<bool>("Activo")
@@ -189,6 +200,9 @@ namespace Orión.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("Activo");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("FechaInstalacion")
                         .HasColumnType("timestamp with time zone")
@@ -214,14 +228,17 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("NombreMaquina")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("Nombre_Maquina");
 
                     b.Property<string>("Tipo")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("Tipo");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("IdMaquinaria");
 
@@ -274,6 +291,58 @@ namespace Orión.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Orión.Domain.Entities.Proveedor", b =>
+                {
+                    b.Property<int>("IdProveedor")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("ID_Proveedor");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("IdProveedor"));
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("Activo");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Direccion")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("Direccion");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("Email");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("Nombre");
+
+                    b.Property<string>("RUC")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("RUC");
+
+                    b.Property<string>("Telefono")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("Telefono");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("IdProveedor");
+
+                    b.ToTable("Proveedor", (string)null);
+                });
+
             modelBuilder.Entity("Orión.Domain.Entities.SolicitudServicio", b =>
                 {
                     b.Property<int>("IdSS")
@@ -282,6 +351,9 @@ namespace Orión.Infrastructure.Migrations
                         .HasColumnName("ID_SS");
 
                     NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("IdSS"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DescripcionFalla")
                         .IsRequired()
@@ -315,6 +387,9 @@ namespace Orión.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("ID_TipoMantto");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("IdSS");
 
                     b.HasIndex("IdEstadoSolicitud");
@@ -340,6 +415,9 @@ namespace Orión.Infrastructure.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("Activo");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Especialidad")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
@@ -354,6 +432,9 @@ namespace Orión.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("Nombre_Apellido");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("IdPersonal");
 
@@ -373,8 +454,8 @@ namespace Orión.Infrastructure.Migrations
 
                     b.Property<string>("NombreTipo")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("Nombre_Tipo");
 
                     b.HasKey("IdTipoComponente");
@@ -495,16 +576,16 @@ namespace Orión.Infrastructure.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("Activo");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("Email");
-
-                    b.Property<DateTime>("FechaCreacion")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("Fecha_Creacion")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("Email");
 
                     b.Property<string>("NombreUsuario")
                         .IsRequired()
@@ -522,6 +603,9 @@ namespace Orión.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("Rol");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("IdUsuario");
 
@@ -547,6 +631,11 @@ namespace Orión.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Componente_Maquinaria");
 
+                    b.HasOne("Orión.Domain.Entities.Proveedor", "Proveedor")
+                        .WithMany("Componentes")
+                        .HasForeignKey("IdProveedor")
+                        .HasConstraintName("FK_Componente_Proveedor");
+
                     b.HasOne("Orión.Domain.Entities.TipoComponente", "TipoComponente")
                         .WithMany("Componentes")
                         .HasForeignKey("IdTipoComponente")
@@ -557,6 +646,8 @@ namespace Orión.Infrastructure.Migrations
                     b.Navigation("EstadoComponente");
 
                     b.Navigation("Maquinaria");
+
+                    b.Navigation("Proveedor");
 
                     b.Navigation("TipoComponente");
                 });
@@ -651,6 +742,11 @@ namespace Orión.Infrastructure.Migrations
             modelBuilder.Entity("Orión.Domain.Entities.NivelCritico", b =>
                 {
                     b.Navigation("Maquinarias");
+                });
+
+            modelBuilder.Entity("Orión.Domain.Entities.Proveedor", b =>
+                {
+                    b.Navigation("Componentes");
                 });
 
             modelBuilder.Entity("Orión.Domain.Entities.Tecnico", b =>

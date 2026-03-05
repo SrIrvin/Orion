@@ -52,23 +52,31 @@ public static class StagingSeedData
             context.SaveChanges();
         }
 
-        // 3. Generar Solicitudes de Servicio (Historial masivo)
-        if (!context.SolicitudesServicios.Any())
+        // 3. Generar Solicitudes de Servicio (Historial masivo para Mapa de Calor)
+        if (context.SolicitudesServicios.Count() < 50)
         {
-            var maquinasParaSolicitudes = todasLasMaquinas.Take(10).ToList();
+            var maquinasParaSolicitudes = todasLasMaquinas.Take(15).ToList();
             var tecnicos = context.Tecnicos.ToList();
+            var random = new Random();
 
-            for (int i = 1; i <= 30; i++)
+            // Generar datos desde hace 30 días hasta 14 días en el futuro
+            for (int i = -30; i <= 14; i++)
             {
-                context.SolicitudesServicios.Add(new SolicitudServicio
+                // Determinar cuántas fallas crear para este día (0 a 5 para ver diferentes colores)
+                int fallasHoy = random.Next(0, 6); 
+                
+                for (int f = 0; f < fallasHoy; f++)
                 {
-                    IdMaquinaria = maquinasParaSolicitudes[i % maquinasParaSolicitudes.Count].IdMaquinaria,
-                    IdTipoMantto = 1,
-                    DescripcionFalla = $"Falla técnica detectada en ciclo de prueba STG-{i}",
-                    FechaApertura = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(-i), DateTimeKind.Utc),
-                    IdPersonal = tecnicos[i % tecnicos.Count].IdPersonal,
-                    IdEstadoSolicitud = 1
-                });
+                    context.SolicitudesServicios.Add(new SolicitudServicio
+                    {
+                        IdMaquinaria = maquinasParaSolicitudes[random.Next(maquinasParaSolicitudes.Count)].IdMaquinaria,
+                        IdTipoMantto = random.Next(1, 3), // 1: Correctivo, 2: Preventivo
+                        DescripcionFalla = $"Reporte de monitoreo automático - Ciclo {i}-{f}",
+                        FechaApertura = DateTime.SpecifyKind(DateTime.UtcNow.Date.AddDays(i).AddHours(random.Next(8, 18)), DateTimeKind.Utc),
+                        IdPersonal = tecnicos[random.Next(tecnicos.Count)].IdPersonal,
+                        IdEstadoSolicitud = i < 0 ? 4 : 1 // 4: Finalizada (pasado), 1: Abierta (presente/futuro)
+                    });
+                }
             }
             context.SaveChanges();
         }
