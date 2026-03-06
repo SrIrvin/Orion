@@ -8,8 +8,16 @@ public static class DbInitializer
 {
     public static void Initialize(OrionDbContext context)
     {
-        // Asegura que la base de datos existe y aplica todas las migraciones pendientes de forma nativa
-        context.Database.Migrate();
+        // Asegura que la base de datos existe y se prepara según el proveedor
+        if (context.Database.IsNpgsql())
+        {
+            context.Database.Migrate();
+        }
+        else
+        {
+            // Para Access u otros, EnsureCreated es más seguro si no hay migraciones específicas
+            context.Database.EnsureCreated();
+        }
 
         // 0. Asegurar Catálogos Básicos (Ubicaciones y Tipos de Componentes)
         if (!context.Ubicaciones.Any())

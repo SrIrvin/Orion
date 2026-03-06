@@ -64,7 +64,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
         {
             entity.ToTable("Ubicacion");
             entity.HasKey(e => e.IdUbicacion);
-            entity.Property(e => e.IdUbicacion).HasColumnName("ID_Ubicacion").UseSerialColumn();
+            entity.Property(e => e.IdUbicacion).HasColumnName("ID_Ubicacion").ValueGeneratedOnAdd();
             entity.Property(e => e.NumeroNave).HasColumnName("Numero_Nave").IsRequired();
             entity.HasIndex(e => e.NumeroNave).IsUnique();
         });
@@ -74,7 +74,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
         {
             entity.ToTable("TipoComponente");
             entity.HasKey(e => e.IdTipoComponente);
-            entity.Property(e => e.IdTipoComponente).HasColumnName("ID_TipoComponente").UseSerialColumn();
+            entity.Property(e => e.IdTipoComponente).HasColumnName("ID_TipoComponente").ValueGeneratedOnAdd();
             entity.Property(e => e.NombreTipo).HasColumnName("Nombre_Tipo").HasMaxLength(100).IsRequired();
             entity.HasIndex(e => e.NombreTipo).IsUnique();
         });
@@ -199,7 +199,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
         {
             entity.ToTable("Solicitud_Servicio");
             entity.HasKey(e => e.IdSS);
-            entity.Property(e => e.IdSS).HasColumnName("ID_SS").UseSerialColumn();
+            entity.Property(e => e.IdSS).HasColumnName("ID_SS").ValueGeneratedOnAdd();
             entity.Property(e => e.IdMaquinaria).HasColumnName("ID_Maquinaria").HasMaxLength(15).IsRequired();
             entity.Property(e => e.IdTipoMantto).HasColumnName("ID_TipoMantto").IsRequired();
             entity.Property(e => e.DescripcionFalla).HasColumnName("Descripcion_Falla").HasMaxLength(200);
@@ -234,12 +234,12 @@ public class OrionDbContext : DbContext, IOrionDbContext
         {
             entity.ToTable("Usuario");
             entity.HasKey(e => e.IdUsuario);
-            entity.Property(e => e.IdUsuario).HasColumnName("ID_Usuario").UseSerialColumn();
+            entity.Property(e => e.IdUsuario).HasColumnName("ID_Usuario").ValueGeneratedOnAdd();
             entity.Property(e => e.NombreUsuario).HasColumnName("Nombre_Usuario").HasMaxLength(50).IsRequired();
             entity.Property(e => e.PasswordHash).HasColumnName("Password_Hash").IsRequired();
             entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(100);
             entity.Property(e => e.Rol).HasColumnName("Rol").HasMaxLength(20).IsRequired();
-            entity.Property(e => e.CreatedAt).HasColumnName("Fecha_Creacion").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.CreatedAt).HasColumnName("Fecha_Creacion");
             entity.Property(e => e.Activo).HasColumnName("Activo").HasDefaultValue(true);
 
             entity.HasIndex(e => e.NombreUsuario).IsUnique();
@@ -250,7 +250,7 @@ public class OrionDbContext : DbContext, IOrionDbContext
         {
             entity.ToTable("Proveedor");
             entity.HasKey(e => e.IdProveedor);
-            entity.Property(e => e.IdProveedor).HasColumnName("ID_Proveedor").UseSerialColumn();
+            entity.Property(e => e.IdProveedor).HasColumnName("ID_Proveedor").ValueGeneratedOnAdd();
             entity.Property(e => e.Nombre).HasColumnName("Nombre").HasMaxLength(100).IsRequired();
             entity.Property(e => e.RUC).HasColumnName("RUC").HasMaxLength(20);
             entity.Property(e => e.Telefono).HasColumnName("Telefono").HasMaxLength(20);

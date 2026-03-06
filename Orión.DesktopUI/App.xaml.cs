@@ -14,6 +14,7 @@ using Orión.Infrastructure.Persistence;
 using Orión.Infrastructure.Repositories;
 using Orión.Infrastructure.Services;
 
+using Orión.Infrastructure;
 using Microsoft.Extensions.Configuration;
 
 namespace Orión.DesktopUI;
@@ -35,23 +36,11 @@ public partial class App : System.Windows.Application
             })
             .ConfigureServices((context, services) =>
             {
-                // ... (configuración de DB igual)
                 var configuration = context.Configuration;
                 var environment = configuration.GetValue<string>("Environment") ?? "Development";
-                var connStringName = environment == "Staging" ? "StagingConnection" : "DefaultConnection";
-                var connString = configuration.GetConnectionString(connStringName);
 
-                // Persistencia
-                services.AddDbContext<OrionDbContext>(options =>
-                {
-                    options.UseNpgsql(connString);
-                    options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
-                });
-                
-                services.AddScoped<IOrionDbContext>(provider => provider.GetRequiredService<OrionDbContext>());
-
-                // Repositorios
-                services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+                // Persistencia (Encapsulado en Infrastructure siguiendo SOLID)
+                services.AddOrionPersistence(configuration, environment);
 
                 // Navegación UI
                 services.AddSingleton<INavigationService, NavigationService>();
