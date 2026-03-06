@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:Orión.DesktopUI.Views"
+        xmlns:converters="clr-namespace:Orión.DesktopUI.Converters"
         mc:Ignorable="d"
         Title="Orión - Gestor de Mantenimiento" Height="720" Width="1280"
         Icon="../Assets/Icono.ico"
@@ -125,16 +126,104 @@
                     <!-- SETTINGS SECTION -->
                     <StackPanel Grid.Row="2" Margin="0,0,0,16">
                         <Separator Background="White" Margin="20,0,20,8" Opacity="0.15"/>
-                        <ListBox ItemContainerStyle="{StaticResource MaterialDesignNavigationListBoxItem}"
-                                 Style="{StaticResource MaterialDesignNavigationPrimaryListBox}"
-                                 Background="Transparent">
-                            <ListBoxItem Foreground="White" Height="48">
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="SettingsOutline" Margin="24,0,20,0" VerticalAlignment="Center" Width="24" Height="24" Opacity="0.9"/>
-                                    <TextBlock Text="Configuración" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
+                        
+                        <materialDesign:PopupBox Style="{DynamicResource MaterialDesignPopupBox}"
+                                                PlacementMode="RightAndAlignTopEdges"
+                                                UnfurlOrientation="Horizontal"
+                                                ToolTip="Configuración y Sesión"
+                                                Foreground="White"
+                                                Margin="24,0,20,0"
+                                                HorizontalAlignment="Left">
+                            <materialDesign:PopupBox.ToggleContent>
+                                <StackPanel Orientation="Horizontal" Height="48">
+                                    <materialDesign:PackIcon Kind="SettingsOutline" Width="24" Height="24" VerticalAlignment="Center" Opacity="0.9"/>
+                                    <TextBlock Text="Configuración" VerticalAlignment="Center" FontSize="15" Margin="20,0,0,0" FontWeight="Normal"/>
                                 </StackPanel>
-                            </ListBoxItem>
-                        </ListBox>
+                            </materialDesign:PopupBox.ToggleContent>
+                            
+                            <StackPanel Width="220">
+                                <TextBlock Text="CONFIGURACIÓN" Margin="16,12,16,8" FontSize="10" FontWeight="Bold" Opacity="0.6"/>
+                                
+                                <Button Command="{Binding LogoutCommand}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" Padding="16,8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Logout" Width="20" Height="20" Margin="0,0,12,0"/>
+                                        <TextBlock Text="Cerrar sesión"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Command="{Binding SwitchAccountCommand}" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" Padding="16,8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="AccountSwitch" Width="20" Height="20" Margin="0,0,12,0"/>
+                                        <TextBlock Text="Switch Account"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Separator Margin="8,4"/>
+
+                                <TextBlock Text="SISTEMA DE DATOS" Margin="16,4,16,8" FontSize="10" FontWeight="Bold" Opacity="0.6"/>
+
+                                <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" 
+                                        Style="{StaticResource MaterialDesignFlatButton}" 
+                                        HorizontalContentAlignment="Left" Padding="16,8">
+                                    <Button.CommandParameter>
+                                        <Grid Width="450" Margin="16">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Text="{Binding CurrentDbProvider, StringFormat='INFORMACIÓN DE CONEXIÓN - {0}', Converter={StaticResource StringToUpperConverter}}" 
+                                                       FontSize="16" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,8"/>
+                                            
+                                            <Separator Grid.Row="1" Background="{StaticResource PrimaryBrush}" Margin="0,0,0,16" Opacity="0.3"/>
+
+                                            <StackPanel Grid.Row="2">
+                                                <materialDesign:Card Background="#F5F7F9" Padding="16" UniformCornerRadius="8" Margin="0,0,0,16">
+                                                    <StackPanel>
+                                                        <TextBlock Text="CONNECTION STRING ACTUAL:" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,8"/>
+                                                        <TextBox Text="{Binding CurrentConnectionString, Mode=OneWay}" 
+                                                                 IsReadOnly="True" TextWrapping="Wrap" 
+                                                                 FontSize="11" FontFamily="Consolas" BorderThickness="0" Background="Transparent"/>
+                                                    </StackPanel>
+                                                </materialDesign:Card>
+
+                                                <TextBlock Text="REQUISITOS Y DETALLES:" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,8"/>
+                                                
+                                                <!-- Contenido condicional según proveedor -->
+                                                <StackPanel Visibility="{Binding CurrentDbProvider, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter='Access'}">
+                                                    <TextBlock Text="• Tipo: Microsoft Access Database (.accdb)" Margin="0,0,0,4"/>
+                                                    <TextBlock Text="• Provider: Microsoft.ACE.OLEDB.12.0" Margin="0,0,0,4"/>
+                                                    <TextBlock Text="• Ubicación: Carpeta de Documentos del usuario" Margin="0,0,0,4"/>
+                                                    <TextBlock Text="• Requisito: Access Database Engine 2016+ (X64)" Foreground="#FF6F61" FontWeight="SemiBold"/>
+                                                </StackPanel>
+
+                                                <StackPanel Visibility="{Binding CurrentDbProvider, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter='PostgreSQL'}">
+                                                    <TextBlock Text="• Tipo: PostgreSQL Relational Database" Margin="0,0,0,4"/>
+                                                    <TextBlock Text="• Driver: Npgsql ADO.NET Data Provider" Margin="0,0,0,4"/>
+                                                    <TextBlock Text="• Versión recomendada: 14 o superior" Margin="0,0,0,4"/>
+                                                    <TextBlock Text="• Puerto por defecto: 5432" Margin="0,0,0,4"/>
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                                                <Button Command="{Binding CopyConnectionStringCommand}" 
+                                                        Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                                        Content="COPIAR CONNECTION STRING" Margin="0,0,8,0" FontSize="11"/>
+                                                <Button Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" 
+                                                        Style="{StaticResource MaterialDesignFlatButton}" 
+                                                        Content="CERRAR" Foreground="#FF6F61"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button.CommandParameter>
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Database" Width="20" Height="20" Margin="0,0,12,0"/>
+                                        <TextBlock Text="Bases de Datos"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </materialDesign:PopupBox>
                     </StackPanel>
 
                     <!-- DEVELOPER FOOTER -->
@@ -164,20 +253,21 @@
                 </Grid>
             </materialDesign:DrawerHost.LeftDrawerContent>
 
-            <DockPanel Background="{StaticResource BackgroundBrush}">
+            <DockPanel Background="{DynamicResource BackgroundBrush}">
                 <materialDesign:ColorZone Padding="8,16" materialDesign:ElevationAssist.Elevation="Dp2" 
                                           Mode="Standard" DockPanel.Dock="Top" Background="White">
                     <DockPanel>
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                             <ToggleButton x:Name="MenuToggleButton" Style="{StaticResource MaterialDesignHamburgerToggleButton}"
-                                          Foreground="{StaticResource PrimaryBrush}"/>
+                                          Foreground="{DynamicResource PrimaryBrush}"/>
                             <TextBlock VerticalAlignment="Center" Margin="16,0,0,0" FontSize="18" 
                                        Text="Orión - Sistema de Gestión" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                         </StackPanel>
                         
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
-                            <materialDesign:Chip Content="Sesión: Admin" Margin="8,0,16,0" 
-                                                 IconBackground="{StaticResource PrimaryBrush}"
+                            <materialDesign:Chip Content="{Binding CurrentUserRole, StringFormat='Sesión: {0}', FallbackValue='Sesión: Usuario'}" 
+                                                 Margin="8,0,16,0" 
+                                                 IconBackground="{DynamicResource PrimaryBrush}"
                                                  IconForeground="White">
                                 <materialDesign:Chip.Icon>
                                     <materialDesign:PackIcon Kind="Account" />

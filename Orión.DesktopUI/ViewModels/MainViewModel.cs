@@ -8,30 +8,89 @@ using Orión.DesktopUI.Interfaces;
 using Orión.DesktopUI.Services;
 using System.Diagnostics;
 
+using System.Windows;
+using Microsoft.Extensions.Configuration;
+
 namespace Orión.DesktopUI.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
     private readonly INavigationService _navigationService;
+    private readonly IUserSessionService _sessionService;
+    private readonly IConfiguration _configuration;
 
     [ObservableProperty]
     private bool _isAdmin;
 
+    [ObservableProperty]
+    private string? _currentUserRole;
+
+    [ObservableProperty]
+    private string? _currentDbProvider;
+
+    [ObservableProperty]
+    private string? _currentConnectionString;
+
     public object? CurrentView => _navigationService.CurrentView;
 
-    public MainViewModel(INavigationService navigationService, IUserSessionService sessionService)
+    public MainViewModel(INavigationService navigationService, IUserSessionService sessionService, IConfiguration configuration)
     {
         _navigationService = navigationService;
+        _sessionService = sessionService;
+        _configuration = configuration;
+
         _navigationService.CurrentViewChanged += () => OnPropertyChanged(nameof(CurrentView));
 
         _navigationService.NavigateTo<DashboardView>();
         IsAdmin = sessionService.IsAdmin;
+        CurrentUserRole = sessionService.CurrentUser?.Rol ?? "Usuario";
+        
+        // Cargar info de DB
+        CurrentDbProvider = _configuration.GetValue<string>("DbProvider") ?? "PostgreSQL";
+        var connStringName = CurrentDbProvider.Equals("Access", StringComparison.OrdinalIgnoreCase) 
+            ? "AccessConnection" 
+            : (_configuration.GetValue<string>("Environment") == "Staging" ? "StagingConnection" : "DefaultConnection");
+        
+        var rawConn = _configuration.GetConnectionString(connStringName);
+        if (CurrentDbProvider.Equals("Access", StringComparison.OrdinalIgnoreCase))
+        {
+            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            CurrentConnectionString = rawConn?.Replace("{Documents}", documentsPath);
+        }
+        else
+        {
+            CurrentConnectionString = rawConn;
+        }
 
         // Registrar mensaje de navegación desde el mapa de calor global
         WeakReferenceMessenger.Default.Register<NavigateToSolicitudesMessage>(this, (r, m) =>
         {
             NavigateToSolicitudes();
         });
+    }
+
+    [RelayCommand]
+    private void Logout()
+    {
+        _sessionService.CurrentUser = null;
+        WeakReferenceMessenger.Default.Send(new LogoutMessage());
+    }
+
+    [RelayCommand]
+    private void SwitchAccount()
+    {
+        _sessionService.CurrentUser = null;
+        WeakReferenceMessenger.Default.Send(new LogoutMessage());
+    }
+
+    [RelayCommand]
+    private void CopyConnectionString()
+    {
+        if (!string.IsNullOrEmpty(CurrentConnectionString))
+        {
+            Clipboard.SetText(CurrentConnectionString);
+            // Podríamos enviar un mensaje al Snackbar aquí
+        }
     }
 
     [RelayCommand]

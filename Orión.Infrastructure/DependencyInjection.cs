@@ -7,9 +7,11 @@ using Orión.Infrastructure.Repositories;
 using System.IO;
 using System.Linq;
 using System;
+using System.Runtime.Versioning;
 
 namespace Orión.Infrastructure;
 
+[SupportedOSPlatform("windows")]
 public static class DependencyInjection
 {
     public static IServiceCollection AddOrionPersistence(this IServiceCollection services, IConfiguration configuration, string environment)

@@ -94,6 +94,18 @@ public partial class App : System.Windows.Application
             mainView.Show();
             _loginView?.Close();
         });
+
+        // Suscribirse al mensaje de logout
+        WeakReferenceMessenger.Default.Register<LogoutMessage>(this, (r, m) =>
+        {
+            // Reabrir Login
+            _loginView = _host.Services.GetRequiredService<LoginView>();
+            _loginView.Show();
+
+            // Cerrar la ventana principal activa
+            var activeMainView = System.Windows.Application.Current.Windows.OfType<MainView>().FirstOrDefault();
+            activeMainView?.Close();
+        });
     }
 
     private void LogError(string source, Exception? ex)
