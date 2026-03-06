@@ -73,4 +73,14 @@ public class DbConfigurationDtoTests
                   .And.Contain("Port=5433")
                   .And.Contain("Host=remote-host");
     }
+
+    [Fact]
+    public void IsProduction_DefaultValue_ShouldBeFalse()
+    {
+        // Act
+        var config = new DbConfigurationDto();
+
+        // Assert
+        config.IsProduction.Should().BeFalse();
+    }
 }

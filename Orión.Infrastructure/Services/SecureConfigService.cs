@@ -87,6 +87,7 @@ public class SecureConfigService : ISecureConfigService
     {
         var provider = _appConfig.GetValue<string>("DbProvider") ?? "PostgreSQL";
         var env = _appConfig.GetValue<string>("Environment") ?? "Development";
+        var isProd = env.Equals("Production", StringComparison.OrdinalIgnoreCase);
         var connStringName = provider.Equals("Access", StringComparison.OrdinalIgnoreCase) 
             ? "AccessConnection" 
             : (env == "Staging" ? "StagingConnection" : "DefaultConnection");
@@ -101,12 +102,20 @@ public class SecureConfigService : ISecureConfigService
                 .FirstOrDefault(x => x.Trim().StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))?
                 .Split('=')[1].Trim();
 
-            return new DbConfigurationDto { Provider = "Access", AccessFilePath = filePath };
+            return new DbConfigurationDto { Provider = "Access", AccessFilePath = filePath, IsProduction = isProd };
         }
         else
         {
             // Parse basic Npgsql string if needed, or just return basic
-            return new DbConfigurationDto { Provider = "PostgreSQL", Host = "localhost", DatabaseName = "DB_Orion", Username = "admin", Port = 5433 };
+            return new DbConfigurationDto 
+            { 
+                Provider = "PostgreSQL", 
+                Host = "localhost", 
+                DatabaseName = "DB_Orion", 
+                Username = "admin", 
+                Port = 5433,
+                IsProduction = isProd
+            };
         }
     }
 }

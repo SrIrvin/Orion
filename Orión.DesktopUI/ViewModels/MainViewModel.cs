@@ -29,6 +29,9 @@ public partial class MainViewModel : ObservableObject
     private string? _currentUserRole;
 
     [ObservableProperty]
+    private bool _isProduction;
+
+    [ObservableProperty]
     private DbConfigurationDto _configEditBuffer;
 
     [ObservableProperty]
@@ -61,6 +64,7 @@ public partial class MainViewModel : ObservableObject
         
         // Cargar configuración actual para edición
         ConfigEditBuffer = _secureConfigService.LoadConfig();
+        IsProduction = ConfigEditBuffer.IsProduction;
 
         // Registrar mensaje de navegación desde el mapa de calor global
         WeakReferenceMessenger.Default.Register<NavigateToSolicitudesMessage>(this, (r, m) =>

@@ -6,7 +6,7 @@ namespace Orión.Infrastructure.Persistence;
 
 public static class DbInitializer
 {
-    public static void Initialize(OrionDbContext context)
+    public static void Initialize(OrionDbContext context, bool isProduction)
     {
         // Asegura que la base de datos existe y se prepara según el proveedor
         if (context.Database.IsNpgsql())
@@ -20,6 +20,7 @@ public static class DbInitializer
         }
 
         // 0. Asegurar Catálogos Básicos (Ubicaciones y Tipos de Componentes)
+        // Estos se cargan siempre, incluso en producción
         if (!context.Ubicaciones.Any())
         {
             context.Ubicaciones.Add(new Ubicacion { NumeroNave = 1 });
@@ -37,8 +38,9 @@ public static class DbInitializer
             context.SaveChanges();
         }
 
-        // 1. Crear usuarios por defecto
-        if (!context.Usuarios.Any(u => u.NombreUsuario == "admin"))
+        // 1. Aprovisionamiento Inicial de Usuario (HU-002)
+        // Solo si la base de datos está totalmente vacía de usuarios
+        if (!context.Usuarios.Any())
         {
             context.Usuarios.Add(new Usuario
             {
@@ -48,82 +50,74 @@ public static class DbInitializer
                 Rol = "Admin",
                 Activo = true
             });
+            context.SaveChanges();
         }
 
-        if (!context.Usuarios.Any(u => u.NombreUsuario == "operador"))
+        // 2. Datos de Demostración (Solo en Entornos No-Producción)
+        if (!isProduction)
         {
-            context.Usuarios.Add(new Usuario
+            // Cargar datos de prueba para Maquinaria
+            if (!context.Maquinarias.Any())
             {
-                NombreUsuario = "operador",
-                PasswordHash = BC.HashPassword("user123"),
-                Email = "operador@orion.com",
-                Rol = "Operador",
-                Activo = true
-            });
-        }
-        context.SaveChanges();
+                var ubicacionId = context.Ubicaciones.First().IdUbicacion;
 
-        // 2. Datos de prueba para Maquinaria
-        if (!context.Maquinarias.Any())
-        {
-            var ubicacionId = context.Ubicaciones.First().IdUbicacion;
+                context.Maquinarias.AddRange(
+                    new Maquinaria
+                    {
+                        IdMaquinaria = "MAQ-001",
+                        NombreMaquina = "Prensa Hidráulica 50T",
+                        Tipo = "Prensa",
+                        Marca = "HydraForce",
+                        Modelo = "HF-50",
+                        FechaInstalacion = DateTime.UtcNow.AddYears(-2),
+                        IdNivelCritico = 3, // Alta
+                        IdUbicacion = ubicacionId
+                    },
+                    new Maquinaria
+                    {
+                        IdMaquinaria = "MAQ-002",
+                        NombreMaquina = "Torno CNC Quick Turn",
+                        Tipo = "Torno",
+                        Marca = "Mazak",
+                        Modelo = "Quick Turn 250",
+                        FechaInstalacion = DateTime.UtcNow.AddYears(-1),
+                        IdNivelCritico = 4, // Critico
+                        IdUbicacion = ubicacionId
+                    }
+                );
+                context.SaveChanges();
+            }
 
-            context.Maquinarias.AddRange(
-                new Maquinaria
-                {
-                    IdMaquinaria = "MAQ-001",
-                    NombreMaquina = "Prensa Hidráulica 50T",
-                    Tipo = "Prensa",
-                    Marca = "HydraForce",
-                    Modelo = "HF-50",
-                    FechaInstalacion = DateTime.UtcNow.AddYears(-2),
-                    IdNivelCritico = 3, // Alta
-                    IdUbicacion = ubicacionId
-                },
-                new Maquinaria
-                {
-                    IdMaquinaria = "MAQ-002",
-                    NombreMaquina = "Torno CNC Quick Turn",
-                    Tipo = "Torno",
-                    Marca = "Mazak",
-                    Modelo = "Quick Turn 250",
-                    FechaInstalacion = DateTime.UtcNow.AddYears(-1),
-                    IdNivelCritico = 4, // Critico
-                    IdUbicacion = ubicacionId
-                }
-            );
-            context.SaveChanges();
-        }
-
-        // 3. Datos de prueba para Personal Técnico
-        if (!context.Tecnicos.Any())
-        {
-            context.Tecnicos.AddRange(
-                new Tecnico { IdPersonal = 101, NombreApellido = "Sr. Juan Pérez", Especialidad = "Mecánico", IdTurno = 1, Activo = true },
-                new Tecnico { IdPersonal = 102, NombreApellido = "Ing. Maria García", Especialidad = "Electrónica", IdTurno = 2, Activo = true },
-                new Tecnico { IdPersonal = 103, NombreApellido = "Pedro López", Especialidad = "Soldador", IdTurno = 3, Activo = true }
-            );
-            context.SaveChanges();
-        }
-
-        // 4. Datos de prueba para Componentes
-        if (!context.Componentes.Any())
-        {
-            var maq = context.Maquinarias.First();
-            var tipo = context.TiposComponentes.First();
-
-            context.Componentes.Add(new Componente
+            // Cargar datos de prueba para Personal Técnico
+            if (!context.Tecnicos.Any())
             {
-                IdComponente = $"COMP-{maq.IdMaquinaria}-01",
-                IdMaquinaria = maq.IdMaquinaria,
-                NombreComponente = "Motor Principal de Inducción",
-                IdTipoComponente = tipo.IdTipoComponente,
-                Marca = "Siemens",
-                NumeroSerie = $"SN-{maq.IdMaquinaria}-MP",
-                IdEstado = 1,
-                Activo = true
-            });
-            context.SaveChanges();
+                context.Tecnicos.AddRange(
+                    new Tecnico { IdPersonal = 101, NombreApellido = "Sr. Juan Pérez", Especialidad = "Mecánico", IdTurno = 1, Activo = true },
+                    new Tecnico { IdPersonal = 102, NombreApellido = "Ing. Maria García", Especialidad = "Electrónica", IdTurno = 2, Activo = true },
+                    new Tecnico { IdPersonal = 103, NombreApellido = "Pedro López", Especialidad = "Soldador", IdTurno = 3, Activo = true }
+                );
+                context.SaveChanges();
+            }
+
+            // Cargar datos de prueba para Componentes
+            if (!context.Componentes.Any())
+            {
+                var maq = context.Maquinarias.First();
+                var tipo = context.TiposComponentes.First();
+
+                context.Componentes.Add(new Componente
+                {
+                    IdComponente = $"COMP-{maq.IdMaquinaria}-01",
+                    IdMaquinaria = maq.IdMaquinaria,
+                    NombreComponente = "Motor Principal de Inducción",
+                    IdTipoComponente = tipo.IdTipoComponente,
+                    Marca = "Siemens",
+                    NumeroSerie = $"SN-{maq.IdMaquinaria}-MP",
+                    IdEstado = 1,
+                    Activo = true
+                });
+                context.SaveChanges();
+            }
         }
     }
 }

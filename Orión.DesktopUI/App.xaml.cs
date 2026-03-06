@@ -143,10 +143,13 @@ public partial class App : System.Windows.Application
             {
                 var context = scope.ServiceProvider.GetRequiredService<OrionDbContext>();
                 var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                var secureConfig = scope.ServiceProvider.GetRequiredService<ISecureConfigService>();
                 
-                DbInitializer.Initialize(context);
+                var userConfig = secureConfig.LoadConfig();
+                
+                DbInitializer.Initialize(context, userConfig.IsProduction);
 
-                if (config.GetValue<string>("Environment") == "Staging")
+                if (!userConfig.IsProduction)
                 {
                     StagingSeedData.Seed(context);
                 }

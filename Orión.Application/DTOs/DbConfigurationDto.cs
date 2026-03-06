@@ -3,6 +3,7 @@ namespace Orión.Application.DTOs;
 public class DbConfigurationDto
 {
     public string Provider { get; set; } = "PostgreSQL"; // PostgreSQL | Access
+    public bool IsProduction { get; set; } = false;
     
     // Access
     public string? AccessFilePath { get; set; }

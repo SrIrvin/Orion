@@ -301,8 +301,17 @@
                                                 </StackPanel>
                                             </ScrollViewer>
 
+                                            <!-- OPCIONES GLOBALES -->
+                                            <StackPanel Grid.Row="4" Margin="0,16,0,0">
+                                                <CheckBox Content="Entorno de Producción (Oculta datos de prueba)" 
+                                                          IsChecked="{Binding ConfigEditBuffer.IsProduction}" 
+                                                          Foreground="{DynamicResource PrimaryBrush}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="⚠️ Si activa esto, la base de datos se mantendrá limpia de equipos demo." 
+                                                           FontSize="10" Opacity="0.6" Margin="24,4,0,0"/>
+                                            </StackPanel>
+
                                             <!-- TEST CONNECTION AREA -->
-                                            <Border Grid.Row="4" Background="#F5F7F9" CornerRadius="8" Padding="16" Margin="0,20,0,0">
+                                            <Border Grid.Row="5" Background="#F5F7F9" CornerRadius="8" Padding="16" Margin="0,20,0,0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*"/>
@@ -379,6 +388,12 @@
                                           Foreground="{DynamicResource PrimaryBrush}"/>
                             <TextBlock VerticalAlignment="Center" Margin="16,0,0,0" FontSize="18" 
                                        Text="Orión - Sistema de Gestión" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            
+                            <!-- BADGE DE ENTORNO -->
+                            <Border Background="#FF6F61" CornerRadius="12" Margin="24,0,0,0" VerticalAlignment="Center" Padding="12,4"
+                                    Visibility="{Binding IsProduction, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Inverse'}">
+                                <TextBlock Text="MODO DESARROLLO" Foreground="White" FontSize="10" FontWeight="Bold"/>
+                            </Border>
                         </StackPanel>
                         
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
