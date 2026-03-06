@@ -132,26 +132,37 @@ public partial class App : System.Windows.Application
         e.SetObserved();
     }
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         try 
         {
             _host.Start();
 
-            // Asegurar que la base de datos esté creada y migrada
             using (var scope = _host.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<OrionDbContext>();
-                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
                 var secureConfig = scope.ServiceProvider.GetRequiredService<ISecureConfigService>();
+                var usuarioService = scope.ServiceProvider.GetRequiredService<IUsuarioService>();
+                var sessionService = scope.ServiceProvider.GetRequiredService<IUserSessionService>();
                 
                 var userConfig = secureConfig.LoadConfig();
                 
+                // 1. Inicializar DB
                 DbInitializer.Initialize(context, userConfig.IsProduction);
+                if (!userConfig.IsProduction) StagingSeedData.Seed(context);
 
-                if (!userConfig.IsProduction)
+                // 2. Intentar Auto-Login
+                if (userConfig.RememberMe && userConfig.LastUserId.HasValue && userConfig.SessionExpiry > DateTime.UtcNow)
                 {
-                    StagingSeedData.Seed(context);
+                    var user = await usuarioService.GetByIdAsync(userConfig.LastUserId.Value);
+                    if (user != null && user.Activo)
+                    {
+                        sessionService.CurrentUser = user;
+                        var mainView = _host.Services.GetRequiredService<MainView>();
+                        mainView.Show();
+                        base.OnStartup(e);
+                        return;
+                    }
                 }
             }
 

@@ -73,9 +73,16 @@
                             <materialDesign:PackIcon Kind="Eye" Width="20" Height="20"/>
                         </Button>
                     </Grid>
-                </materialDesign:Card>
+                    </materialDesign:Card>
 
-                <Button Content="ENTRAR" IsDefault="True" Command="{Binding LoginCommand}"
+                    <CheckBox Content="Recordarme en este equipo" 
+                          IsChecked="{Binding RememberMe}"
+                          Margin="0,0,0,24"
+                          Foreground="{StaticResource PrimaryBrush}"
+                          FontWeight="SemiBold"/>
+
+                    <Button Content="ENTRAR" 
+ IsDefault="True" Command="{Binding LoginCommand}"
                         Click="LoginButton_Click" Height="45"
                         materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusy}"
                         materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsBusy}"

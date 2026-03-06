@@ -57,6 +57,15 @@ public class SecureConfigService : ISecureConfigService
         File.WriteAllBytes(_configPath, encryptedData);
     }
 
+    public void ClearSession()
+    {
+        var config = LoadConfig();
+        config.RememberMe = false;
+        config.LastUserId = null;
+        config.SessionExpiry = null;
+        SaveConfig(config);
+    }
+
     public async Task<bool> TestConnection(DbConfigurationDto config)
     {
         var connString = config.GetConnectionString();

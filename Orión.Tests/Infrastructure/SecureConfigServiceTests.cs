@@ -70,6 +70,34 @@ public class SecureConfigServiceTests : IDisposable
         config.Provider.Should().Be("PostgreSQL");
     }
 
+    [Fact]
+    public void ClearSession_ShouldResetPersistenceFields()
+    {
+        // Arrange
+        var service = new SecureConfigService(_config, "db_config_clear_test.bin");
+        var config = new DbConfigurationDto
+        {
+            RememberMe = true,
+            LastUserId = 1,
+            SessionExpiry = DateTime.UtcNow.AddDays(1)
+        };
+        service.SaveConfig(config);
+
+        // Act
+        service.ClearSession();
+        var clearedConfig = service.LoadConfig();
+
+        // Assert
+        clearedConfig.RememberMe.Should().BeFalse();
+        clearedConfig.LastUserId.Should().BeNull();
+        clearedConfig.SessionExpiry.Should().BeNull();
+
+        // Cleanup
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var testPath = Path.Combine(appData, "Orión", "db_config_clear_test.bin");
+        if (File.Exists(testPath)) File.Delete(testPath);
+    }
+
     public void Dispose()
     {
         // Cleanup if needed

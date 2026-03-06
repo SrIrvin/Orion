@@ -16,6 +16,11 @@ public class DbConfigurationDto
     public string? Password { get; set; }
     public bool SslMode { get; set; } = false;
 
+    // Session Persistence
+    public bool RememberMe { get; set; } = false;
+    public int? LastUserId { get; set; }
+    public DateTime? SessionExpiry { get; set; }
+
     public string GetConnectionString()
     {
         if (Provider.Equals("Access", StringComparison.OrdinalIgnoreCase))

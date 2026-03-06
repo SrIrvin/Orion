@@ -127,6 +127,7 @@ public partial class MainViewModel : ObservableObject
     private void Logout()
     {
         _sessionService.CurrentUser = null;
+        _secureConfigService.ClearSession();
         WeakReferenceMessenger.Default.Send(new LogoutMessage());
     }
 
@@ -134,6 +135,7 @@ public partial class MainViewModel : ObservableObject
     private void SwitchAccount()
     {
         _sessionService.CurrentUser = null;
+        _secureConfigService.ClearSession();
         WeakReferenceMessenger.Default.Send(new LogoutMessage());
     }
 

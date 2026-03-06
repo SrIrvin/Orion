@@ -11,6 +11,7 @@ public record LoginSuccessMessage(Usuario User);
 public partial class LoginViewModel : ObservableObject
 {
     private readonly IAuthService _authService;
+    private readonly ISecureConfigService _secureConfigService;
 
     [ObservableProperty]
     private string _username = string.Empty;
@@ -19,39 +20,62 @@ public partial class LoginViewModel : ObservableObject
     private string _password = string.Empty;
 
     [ObservableProperty]
-    private string? _errorMessage;
+    private bool _rememberMe;
+
+    [ObservableProperty]
+    private string _errorMessage = string.Empty;
 
     [ObservableProperty]
     private bool _isBusy;
 
-    public LoginViewModel(IAuthService authService)
+    public LoginViewModel(IAuthService authService, ISecureConfigService secureConfigService)
     {
         _authService = authService;
+        _secureConfigService = secureConfigService;
+
+        // Cargar estado previo de RememberMe
+        var config = _secureConfigService.LoadConfig();
+        RememberMe = config.RememberMe;
     }
 
     [RelayCommand]
-    private async Task LoginAsync()
+    private async Task Login()
     {
-        if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+        if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrEmpty(Password))
         {
-            ErrorMessage = "Usuario y contraseña requeridos.";
+            ErrorMessage = "Ingrese usuario y contraseña.";
             return;
         }
 
         IsBusy = true;
-        ErrorMessage = null;
+        ErrorMessage = string.Empty;
 
         try
         {
             var user = await _authService.LoginAsync(Username, Password);
-
             if (user != null)
             {
+                // Manejar persistencia de sesión
+                var config = _secureConfigService.LoadConfig();
+                if (RememberMe)
+                {
+                    config.RememberMe = true;
+                    config.LastUserId = user.IdUsuario;
+                    config.SessionExpiry = DateTime.UtcNow.AddDays(7); // Expira en 7 días
+                }
+                else
+                {
+                    config.RememberMe = false;
+                    config.LastUserId = null;
+                    config.SessionExpiry = null;
+                }
+                _secureConfigService.SaveConfig(config);
+
                 WeakReferenceMessenger.Default.Send(new LoginSuccessMessage(user));
             }
             else
             {
-                ErrorMessage = "Credenciales incorrectas o usuario inactivo.";
+                ErrorMessage = "Usuario o contraseña incorrectos, o cuenta no activa.";
             }
         }
         catch (Exception ex)
