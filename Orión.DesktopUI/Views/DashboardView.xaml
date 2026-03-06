@@ -170,10 +170,30 @@
         <Grid Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,16,16">
             <StackPanel HorizontalAlignment="Right">
                 <Image Source="../Assets/Icono.PNG" Width="120" Opacity="0.03" HorizontalAlignment="Right" Margin="0,0,0,4"/>
-                <TextBlock Text="ORIÓN - DEMO BETA CERRADA v0.0.1" 
+                
+                <!-- Watermark Producción -->
+                <TextBlock Text="ORIÓN v1.0.0 stable" 
                            FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" 
-                           Opacity="0.25" HorizontalAlignment="Right"
-                           FontStyle="Italic"/>
+                           Opacity="0.15" HorizontalAlignment="Right"
+                           Visibility="{Binding DataContext.IsProduction, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <!-- Watermark Staging -->
+                <StackPanel Orientation="Horizontal" Opacity="0.25" HorizontalAlignment="Right">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DataContext.IsProduction, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <materialDesign:PackIcon Kind="Flask" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="ORIÓN - DEMO BETA v1.0.0" 
+                               FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" 
+                               FontStyle="Italic"/>
+                </StackPanel>
             </StackPanel>
         </Grid>
     </Grid>

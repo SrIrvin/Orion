@@ -386,13 +386,30 @@
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                             <ToggleButton x:Name="MenuToggleButton" Style="{StaticResource MaterialDesignHamburgerToggleButton}"
                                           Foreground="{DynamicResource PrimaryBrush}"/>
-                            <TextBlock VerticalAlignment="Center" Margin="16,0,0,0" FontSize="18" 
-                                       Text="Orión - Sistema de Gestión" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                             
-                            <!-- BADGE DE ENTORNO -->
-                            <Border Background="#FF6F61" CornerRadius="12" Margin="24,0,0,0" VerticalAlignment="Center" Padding="12,4"
-                                    Visibility="{Binding IsProduction, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='Inverse'}">
-                                <TextBlock Text="MODO DESARROLLO" Foreground="White" FontSize="10" FontWeight="Bold"/>
+                            <!-- TÍTULO DINÁMICO -->
+                            <StackPanel VerticalAlignment="Center" Margin="16,0,0,0">
+                                <TextBlock FontSize="18" Text="Orión" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <TextBlock FontSize="10" Text="v1.0.0 stable" Opacity="0.5" Margin="2,-2,0,0"
+                                           Visibility="{Binding IsProduction, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            </StackPanel>
+                            
+                            <!-- BADGE DE ENTORNO (Solo en Staging) -->
+                            <Border Background="#FF8A65" CornerRadius="12" Margin="24,0,0,0" VerticalAlignment="Center" Padding="12,4">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsProduction}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Flask" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="STAGING / DEMO v1.0.0" Foreground="White" FontSize="10" FontWeight="Black"/>
+                                </StackPanel>
                             </Border>
                         </StackPanel>
                         
