@@ -10,6 +10,8 @@ using System.Diagnostics;
 
 using System.Windows;
 using Microsoft.Extensions.Configuration;
+using Orión.Application.DTOs;
+using Microsoft.Win32;
 
 namespace Orión.DesktopUI.ViewModels;
 
@@ -18,6 +20,7 @@ public partial class MainViewModel : ObservableObject
     private readonly INavigationService _navigationService;
     private readonly IUserSessionService _sessionService;
     private readonly IConfiguration _configuration;
+    private readonly ISecureConfigService _secureConfigService;
 
     [ObservableProperty]
     private bool _isAdmin;
@@ -26,18 +29,29 @@ public partial class MainViewModel : ObservableObject
     private string? _currentUserRole;
 
     [ObservableProperty]
-    private string? _currentDbProvider;
+    private DbConfigurationDto _configEditBuffer;
 
     [ObservableProperty]
-    private string? _currentConnectionString;
+    private bool _isTestingConnection;
+
+    [ObservableProperty]
+    private string? _testResultMessage;
+
+    [ObservableProperty]
+    private bool _isTestSuccessful;
 
     public object? CurrentView => _navigationService.CurrentView;
 
-    public MainViewModel(INavigationService navigationService, IUserSessionService sessionService, IConfiguration configuration)
+    public MainViewModel(
+        INavigationService navigationService, 
+        IUserSessionService sessionService, 
+        IConfiguration configuration,
+        ISecureConfigService secureConfigService)
     {
         _navigationService = navigationService;
         _sessionService = sessionService;
         _configuration = configuration;
+        _secureConfigService = secureConfigService;
 
         _navigationService.CurrentViewChanged += () => OnPropertyChanged(nameof(CurrentView));
 
@@ -45,28 +59,64 @@ public partial class MainViewModel : ObservableObject
         IsAdmin = sessionService.IsAdmin;
         CurrentUserRole = sessionService.CurrentUser?.Rol ?? "Usuario";
         
-        // Cargar info de DB
-        CurrentDbProvider = _configuration.GetValue<string>("DbProvider") ?? "PostgreSQL";
-        var connStringName = CurrentDbProvider.Equals("Access", StringComparison.OrdinalIgnoreCase) 
-            ? "AccessConnection" 
-            : (_configuration.GetValue<string>("Environment") == "Staging" ? "StagingConnection" : "DefaultConnection");
-        
-        var rawConn = _configuration.GetConnectionString(connStringName);
-        if (CurrentDbProvider.Equals("Access", StringComparison.OrdinalIgnoreCase))
-        {
-            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            CurrentConnectionString = rawConn?.Replace("{Documents}", documentsPath);
-        }
-        else
-        {
-            CurrentConnectionString = rawConn;
-        }
+        // Cargar configuración actual para edición
+        ConfigEditBuffer = _secureConfigService.LoadConfig();
 
         // Registrar mensaje de navegación desde el mapa de calor global
         WeakReferenceMessenger.Default.Register<NavigateToSolicitudesMessage>(this, (r, m) =>
         {
             NavigateToSolicitudes();
         });
+    }
+
+    [RelayCommand]
+    private async Task TestConnection()
+    {
+        IsTestingConnection = true;
+        TestResultMessage = "Probando conexión...";
+        IsTestSuccessful = false;
+
+        bool success = await _secureConfigService.TestConnection(ConfigEditBuffer);
+
+        IsTestingConnection = false;
+        IsTestSuccessful = success;
+        TestResultMessage = success ? "¡Conexión exitosa!" : "Error al conectar. Verifique los datos.";
+    }
+
+    [RelayCommand]
+    private void SaveConfiguration()
+    {
+        _secureConfigService.SaveConfig(ConfigEditBuffer);
+        MessageBox.Show("Configuración guardada exitosamente. La aplicación utilizará estos cambios en el próximo inicio.", "Configuración", MessageBoxButton.OK, MessageBoxImage.Information);
+        
+        // Cerrar el diálogo usando el ID global
+        MaterialDesignThemes.Wpf.DialogHost.Close("MainDialogHost");
+    }
+
+    [RelayCommand]
+    private void BrowseAccessFile()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Filter = "Archivos de Access (*.accdb;*.mdb)|*.accdb;*.mdb|Todos los archivos (*.*)|*.*",
+            Title = "Seleccionar Base de Datos Access"
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            ConfigEditBuffer.AccessFilePath = dialog.FileName;
+            OnPropertyChanged(nameof(ConfigEditBuffer));
+        }
+    }
+
+    [RelayCommand]
+    private void CopyConnectionString()
+    {
+        var conn = ConfigEditBuffer.GetConnectionString();
+        if (!string.IsNullOrEmpty(conn))
+        {
+            Clipboard.SetText(conn);
+        }
     }
 
     [RelayCommand]
@@ -81,16 +131,6 @@ public partial class MainViewModel : ObservableObject
     {
         _sessionService.CurrentUser = null;
         WeakReferenceMessenger.Default.Send(new LogoutMessage());
-    }
-
-    [RelayCommand]
-    private void CopyConnectionString()
-    {
-        if (!string.IsNullOrEmpty(CurrentConnectionString))
-        {
-            Clipboard.SetText(CurrentConnectionString);
-            // Podríamos enviar un mensaje al Snackbar aquí
-        }
     }
 
     [RelayCommand]

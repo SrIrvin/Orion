@@ -22,6 +22,7 @@
             <converters:StatusToBrushConverter x:Key="StatusToBrushConverter" />
             <converters:StringToUpperConverter x:Key="StringToUpperConverter"/>
             <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+            <converters:StringToBooleanConverter x:Key="StringToBooleanConverter"/>
 
             <!-- Overriding MD Brushes with Marina Moderna Palette -->
             <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="{DynamicResource PrimaryPrussianBlue}" />

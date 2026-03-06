@@ -6,6 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:Orión.DesktopUI.Views"
         xmlns:converters="clr-namespace:Orión.DesktopUI.Converters"
+        xmlns:helpers="clr-namespace:Orión.DesktopUI.Helpers"
         mc:Ignorable="d"
         Title="Orión - Gestor de Mantenimiento" Height="720" Width="1280"
         Icon="../Assets/Icono.ico"
@@ -13,6 +14,13 @@
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         FontFamily="{materialDesign:MaterialDesignFont}">
+
+    <Window.Resources>
+        <converters:StringToUpperConverter x:Key="StringToUpperConverter"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <converters:StringToBooleanConverter x:Key="StringToBooleanConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
 
     <materialDesign:DialogHost Identifier="MainDialogHost" SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}">
         <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
@@ -166,59 +174,121 @@
                                         Style="{StaticResource MaterialDesignFlatButton}" 
                                         HorizontalContentAlignment="Left" Padding="16,8">
                                     <Button.CommandParameter>
-                                        <Grid Width="450" Margin="16">
+                                        <Grid Width="500" Margin="24">
                                             <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
 
-                                            <TextBlock Grid.Row="0" Text="{Binding CurrentDbProvider, StringFormat='INFORMACIÓN DE CONEXIÓN - {0}', Converter={StaticResource StringToUpperConverter}}" 
-                                                       FontSize="16" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,8"/>
+                                            <TextBlock Grid.Row="0" Text="CONFIGURACIÓN DE BASE DE DATOS" 
+                                                       FontSize="18" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,8"/>
                                             
-                                            <Separator Grid.Row="1" Background="{StaticResource PrimaryBrush}" Margin="0,0,0,16" Opacity="0.3"/>
+                                            <Separator Grid.Row="1" Background="{DynamicResource PrimaryBrush}" Margin="0,0,0,20" Opacity="0.3"/>
 
-                                            <StackPanel Grid.Row="2">
-                                                <materialDesign:Card Background="#F5F7F9" Padding="16" UniformCornerRadius="8" Margin="0,0,0,16">
-                                                    <StackPanel>
-                                                        <TextBlock Text="CONNECTION STRING ACTUAL:" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,8"/>
-                                                        <TextBox Text="{Binding CurrentConnectionString, Mode=OneWay}" 
-                                                                 IsReadOnly="True" TextWrapping="Wrap" 
-                                                                 FontSize="11" FontFamily="Consolas" BorderThickness="0" Background="Transparent"/>
-                                                    </StackPanel>
-                                                </materialDesign:Card>
-
-                                                <TextBlock Text="REQUISITOS Y DETALLES:" FontSize="10" FontWeight="Bold" Opacity="0.6" Margin="0,0,0,8"/>
-                                                
-                                                <!-- Contenido condicional según proveedor -->
-                                                <StackPanel Visibility="{Binding CurrentDbProvider, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter='Access'}">
-                                                    <TextBlock Text="• Tipo: Microsoft Access Database (.accdb)" Margin="0,0,0,4"/>
-                                                    <TextBlock Text="• Provider: Microsoft.ACE.OLEDB.12.0" Margin="0,0,0,4"/>
-                                                    <TextBlock Text="• Ubicación: Carpeta de Documentos del usuario" Margin="0,0,0,4"/>
-                                                    <TextBlock Text="• Requisito: Access Database Engine 2016+ (X64)" Foreground="#FF6F61" FontWeight="SemiBold"/>
-                                                </StackPanel>
-
-                                                <StackPanel Visibility="{Binding CurrentDbProvider, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter='PostgreSQL'}">
-                                                    <TextBlock Text="• Tipo: PostgreSQL Relational Database" Margin="0,0,0,4"/>
-                                                    <TextBlock Text="• Driver: Npgsql ADO.NET Data Provider" Margin="0,0,0,4"/>
-                                                    <TextBlock Text="• Versión recomendada: 14 o superior" Margin="0,0,0,4"/>
-                                                    <TextBlock Text="• Puerto por defecto: 5432" Margin="0,0,0,4"/>
-                                                </StackPanel>
+                                            <!-- SELECTOR DE MOTOR -->
+                                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,24">
+                                                <RadioButton Content="Microsoft Access" Margin="0,0,32,0"
+                                                             Style="{StaticResource MaterialDesignTabRadioButton}"
+                                                             IsChecked="{Binding ConfigEditBuffer.Provider, Converter={StaticResource StringToBooleanConverter}, ConverterParameter='Access'}"/>
+                                                <RadioButton Content="PostgreSQL Server" 
+                                                             Style="{StaticResource MaterialDesignTabRadioButton}"
+                                                             IsChecked="{Binding ConfigEditBuffer.Provider, Converter={StaticResource StringToBooleanConverter}, ConverterParameter='PostgreSQL'}"/>
                                             </StackPanel>
 
-                                            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-                                                <Button Command="{Binding CopyConnectionStringCommand}" 
-                                                        Style="{StaticResource MaterialDesignOutlinedButton}" 
-                                                        Content="COPIAR CONNECTION STRING" Margin="0,0,8,0" FontSize="11"/>
+                                            <!-- CAMPOS DINÁMICOS -->
+                                            <ScrollViewer Grid.Row="3" MaxHeight="350" VerticalScrollBarVisibility="Auto">
+                                                <StackPanel>
+                                                    <!-- Access Fields -->
+                                                    <StackPanel Visibility="{Binding ConfigEditBuffer.Provider, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter='Access'}">
+                                                        <TextBlock Text="📁 Ruta del archivo (.accdb / .mdb)" Margin="0,0,0,8" Opacity="0.6" FontSize="12"/>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBox Text="{Binding ConfigEditBuffer.AccessFilePath, UpdateSourceTrigger=PropertyChanged}"
+                                                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                                                     materialDesign:HintAssist.Hint="C:\Ruta\BaseDeDatos.accdb"/>
+                                                            <Button Grid.Column="1" Command="{Binding BrowseAccessFileCommand}"
+                                                                    Style="{StaticResource MaterialDesignIconButton}" Margin="8,0,0,0">
+                                                                <materialDesign:PackIcon Kind="FolderOpen" />
+                                                            </Button>
+                                                        </Grid>
+                                                        <TextBlock Text="Requisito: Microsoft Access Database Engine 2016+ (X64)" 
+                                                                   Margin="4,8,0,0" FontSize="11" Foreground="#FF6F61" Opacity="0.8"/>
+                                                    </StackPanel>
+
+                                                    <!-- PostgreSQL Fields -->
+                                                    <StackPanel Visibility="{Binding ConfigEditBuffer.Provider, Converter={StaticResource StringToVisibilityConverter}, ConverterParameter='PostgreSQL'}">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="100"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBox Text="{Binding ConfigEditBuffer.Host, UpdateSourceTrigger=PropertyChanged}"
+                                                                     materialDesign:HintAssist.Hint="Host / Servidor" Margin="0,0,8,16"
+                                                                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                                            <TextBox Grid.Column="1" Text="{Binding ConfigEditBuffer.Port, UpdateSourceTrigger=PropertyChanged}"
+                                                                     materialDesign:HintAssist.Hint="Puerto" Margin="0,0,0,16"
+                                                                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                                        </Grid>
+                                                        <TextBox Text="{Binding ConfigEditBuffer.DatabaseName, UpdateSourceTrigger=PropertyChanged}"
+                                                                 materialDesign:HintAssist.Hint="Nombre de la Base de Datos" Margin="0,0,0,16"
+                                                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                                        <TextBox Text="{Binding ConfigEditBuffer.Username, UpdateSourceTrigger=PropertyChanged}"
+                                                                 materialDesign:HintAssist.Hint="Usuario" Margin="0,0,0,16"
+                                                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                                        <materialDesign:Card Background="#F5F7F9" Padding="8,4" UniformCornerRadius="4" Margin="0,0,0,16">
+                                                            <PasswordBox materialDesign:HintAssist.Hint="Contraseña" 
+                                                                         x:Name="ConfigPasswordBox"
+                                                                         helpers:PasswordBoxHelper.BindPassword="True"
+                                                                         helpers:PasswordBoxHelper.BoundPassword="{Binding ConfigEditBuffer.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                         Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
+                                                                         BorderThickness="0"/>
+                                                        </materialDesign:Card>
+                                                        <CheckBox Content="Usar SSL Mode (Seguro)" 
+                                                                  IsChecked="{Binding ConfigEditBuffer.SslMode}" Margin="0,0,0,0"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </ScrollViewer>
+
+                                            <!-- TEST CONNECTION AREA -->
+                                            <Border Grid.Row="4" Background="#F5F7F9" CornerRadius="8" Padding="16" Margin="0,20,0,0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding TestResultMessage, FallbackValue='No se ha probado la conexión'}" 
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="{Binding IsTestSuccessful, Converter={StaticResource StatusToBrushConverter}}"/>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="1" Command="{Binding TestConnectionCommand}"
+                                                            Style="{StaticResource MaterialDesignRaisedButton}"
+                                                            Content="PROBAR CONEXIÓN" 
+                                                            materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsTestingConnection}"
+                                                            materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsTestingConnection}"/>
+                                                </Grid>
+                                            </Border>
+
+                                            <!-- FOOTER ACTIONS -->
+                                            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
                                                 <Button Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" 
                                                         Style="{StaticResource MaterialDesignFlatButton}" 
-                                                        Content="CERRAR" Foreground="#FF6F61"/>
+                                                        Content="CANCELAR" Margin="0,0,8,0"/>
+                                                <Button Command="{Binding SaveConfigurationCommand}" 
+                                                        Style="{StaticResource MaterialDesignRaisedButton}" 
+                                                        Content="GUARDAR CAMBIOS" Background="{DynamicResource PrimaryBrush}"/>
                                             </StackPanel>
                                         </Grid>
                                     </Button.CommandParameter>
                                     <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="Database" Width="20" Height="20" Margin="0,0,12,0"/>
+                                        <materialDesign:PackIcon Kind="DatabaseSettings" Width="20" Height="20" Margin="0,0,12,0"/>
                                         <TextBlock Text="Bases de Datos"/>
                                     </StackPanel>
                                 </Button>

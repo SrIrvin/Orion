@@ -7,12 +7,12 @@ namespace Orión.DesktopUI.Converters;
 
 public class StringToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value == null || parameter == null) return Visibility.Collapsed;
         
-        string val = value.ToString();
-        string param = parameter.ToString();
+        string val = value.ToString() ?? string.Empty;
+        string param = parameter.ToString() ?? string.Empty;
         
         return val.Equals(param, StringComparison.OrdinalIgnoreCase) 
             ? Visibility.Visible 

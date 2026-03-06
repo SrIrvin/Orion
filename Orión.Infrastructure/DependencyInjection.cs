@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Orión.Application.Interfaces;
 using Orión.Infrastructure.Persistence;
 using Orión.Infrastructure.Repositories;
+using Orión.Infrastructure.Services;
 using System.IO;
 using System.Linq;
 using System;
@@ -16,15 +17,19 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddOrionPersistence(this IServiceCollection services, IConfiguration configuration, string environment)
     {
-        var dbProvider = configuration.GetValue<string>("DbProvider") ?? "PostgreSQL";
+        // Registrar Servicio de Configuración Segura
+        services.AddSingleton<ISecureConfigService, SecureConfigService>();
+
+        // Obtener configuración preferida del usuario (archivo binario cifrado)
+        using var tempProvider = services.BuildServiceProvider();
+        var secureConfig = tempProvider.GetRequiredService<ISecureConfigService>();
+        var userConfig = secureConfig.LoadConfig();
 
         services.AddDbContext<OrionDbContext>(options =>
         {
-            if (dbProvider.Equals("Access", StringComparison.OrdinalIgnoreCase))
+            if (userConfig.Provider.Equals("Access", StringComparison.OrdinalIgnoreCase))
             {
-                var rawConnString = configuration.GetConnectionString("AccessConnection");
-                var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var connString = rawConnString?.Replace("{Documents}", documentsPath);
+                var connString = userConfig.GetConnectionString();
                 
                 // Asegurar directorio
                 EnsureDirectoryExists(connString);
@@ -33,8 +38,7 @@ public static class DependencyInjection
             }
             else
             {
-                var connStringName = environment == "Staging" ? "StagingConnection" : "DefaultConnection";
-                var connString = configuration.GetConnectionString(connStringName);
+                var connString = userConfig.GetConnectionString();
                 options.UseNpgsql(connString);
             }
 
