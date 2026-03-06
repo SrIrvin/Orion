@@ -31,7 +31,7 @@
                          materialDesign:TextFieldAssist.PrefixText="👤 "
                          Margin="0,0,0,24"/>
 
-                <materialDesign:Card Background="#F5F7F9" Padding="8,4" UniformCornerRadius="8" Margin="0,0,0,40">
+                <materialDesign:Card Background="#F5F7F9" Padding="8,4" UniformCornerRadius="8" Margin="0,0,0,24">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -73,20 +73,22 @@
                             <materialDesign:PackIcon Kind="Eye" Width="20" Height="20"/>
                         </Button>
                     </Grid>
-                    </materialDesign:Card>
+                </materialDesign:Card>
 
-                    <CheckBox Content="Recordarme en este equipo" 
+                <CheckBox Content="Recordarme en este equipo" 
                           IsChecked="{Binding RememberMe}"
                           Margin="0,0,0,24"
                           Foreground="{StaticResource PrimaryBrush}"
                           FontWeight="SemiBold"/>
 
-                    <Button Content="ENTRAR" 
- IsDefault="True" Command="{Binding LoginCommand}"
-                        Click="LoginButton_Click" Height="45"
+                <Button Content="ENTRAR" 
+                        IsDefault="True" 
+                        Command="{Binding LoginCommand}"
+                        Height="45"
                         materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusy}"
                         materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsBusy}"
-                        Background="{StaticResource PrimaryBrush}" BorderBrush="{StaticResource PrimaryBrush}"
+                        Background="{StaticResource PrimaryBrush}" 
+                        BorderBrush="{StaticResource PrimaryBrush}"
                         Foreground="White"
                         Style="{StaticResource MaterialDesignRaisedButton}"/>
 

@@ -41,6 +41,8 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     private async Task Login()
     {
+        Console.WriteLine($"[DEBUG] Intento de login iniciado para usuario: {Username}");
+        
         if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrEmpty(Password))
         {
             ErrorMessage = "Ingrese usuario y contraseña.";
@@ -55,6 +57,7 @@ public partial class LoginViewModel : ObservableObject
             var user = await _authService.LoginAsync(Username, Password);
             if (user != null)
             {
+                Console.WriteLine("[DEBUG] Autenticación exitosa. Procesando sesión...");
                 // Manejar persistencia de sesión
                 var config = _secureConfigService.LoadConfig();
                 if (RememberMe)

@@ -27,7 +27,6 @@ public partial class App : System.Windows.Application
 
     public App()
     {
-        // ... (resto del constructor igual hasta ConfigureServices)
         _host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, builder) =>
             {
@@ -87,17 +86,27 @@ public partial class App : System.Windows.Application
         // Suscribirse al mensaje de login
         WeakReferenceMessenger.Default.Register<LoginSuccessMessage>(this, (r, m) =>
         {
-            // Guardar usuario en la sesión
-            var session = _host.Services.GetRequiredService<IUserSessionService>();
-            session.CurrentUser = m.User;
+            Dispatcher.Invoke(() => 
+            {
+                try 
+                {
+                    // Guardar usuario en la sesión
+                    var session = _host.Services.GetRequiredService<IUserSessionService>();
+                    session.CurrentUser = m.User;
 
-            // Iniciar monitoreo de inactividad
-            var inactivityService = _host.Services.GetRequiredService<IInactivityService>();
-            inactivityService.StartMonitoring();
+                    // Iniciar monitoreo de inactividad
+                    var inactivityService = _host.Services.GetRequiredService<IInactivityService>();
+                    inactivityService.StartMonitoring();
 
-            var mainView = _host.Services.GetRequiredService<MainView>();
-            mainView.Show();
-            _loginView?.Close();
+                    var mainView = _host.Services.GetRequiredService<MainView>();
+                    mainView.Show();
+                    _loginView?.Close();
+                }
+                catch (Exception ex)
+                {
+                    LogError("Login Transition", ex);
+                }
+            });
         });
 
         // Suscribirse al mensaje de logout
