@@ -17,13 +17,16 @@ public class SecureConfigService : ISecureConfigService
     private readonly string _configPath;
     private readonly IConfiguration _appConfig;
 
-    public SecureConfigService(IConfiguration appConfig)
+    public SecureConfigService(IConfiguration appConfig) : this(appConfig, "db_config.bin") { }
+
+    // Constructor interno para facilitar pruebas unitarias sin sobrescribir config real
+    internal SecureConfigService(IConfiguration appConfig, string fileName)
     {
         _appConfig = appConfig;
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         var dir = Path.Combine(appData, "Orión");
         if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-        _configPath = Path.Combine(dir, "db_config.bin");
+        _configPath = Path.Combine(dir, fileName);
     }
 
     public DbConfigurationDto LoadConfig()
