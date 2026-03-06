@@ -13,9 +13,7 @@ public partial class LoginView : Window
 
     private void LoginButton_Click(object sender, RoutedEventArgs e)
     {
-        if (DataContext is LoginViewModel viewModel)
-        {
-            viewModel.Password = PasswordBox.Password;
-        }
+        // Ya no es necesario pasar la contraseña manualmente, 
+        // el Binding bidireccional a través de PasswordBoxHelper lo maneja automáticamente.
     }
 }

@@ -44,9 +44,13 @@ public static class PasswordBoxHelper
 
     private static void OnBoundPasswordChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        PasswordBox passwordBox = (PasswordBox)d;
+        if (d is not PasswordBox passwordBox) return;
         if (GetUpdatingPassword(passwordBox)) return;
+
+        // Desvincular temporalmente para evitar bucles infinitos
+        passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
         passwordBox.Password = (string)e.NewValue ?? string.Empty;
+        passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
     }
 
     private static bool GetUpdatingPassword(DependencyObject dp) => (bool)dp.GetValue(UpdatingPasswordProperty);
