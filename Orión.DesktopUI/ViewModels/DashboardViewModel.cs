@@ -10,6 +10,7 @@ namespace Orión.DesktopUI.ViewModels;
 public partial class DashboardViewModel : ObservableObject
 {
     private readonly IDashboardService _dashboardService;
+    private readonly IUserSessionService _sessionService;
 
     [ObservableProperty]
     private int _totalMaquinaria;
@@ -24,11 +25,15 @@ public partial class DashboardViewModel : ObservableObject
     private bool _isBusy;
 
     [ObservableProperty]
+    private bool _showSecurityWarning;
+
+    [ObservableProperty]
     private ObservableCollection<GlobalActivityHeatmapDto> _globalHeatmapData = new();
 
-    public DashboardViewModel(IDashboardService dashboardService)
+    public DashboardViewModel(IDashboardService dashboardService, IUserSessionService sessionService)
     {
         _dashboardService = dashboardService;
+        _sessionService = sessionService;
         InitializeAsync();
     }
 
@@ -36,10 +41,34 @@ public partial class DashboardViewModel : ObservableObject
     {
         try
         {
+            CheckSecurityStatus();
             await LoadKpisAsync();
             await LoadHeatmapAsync();
         }
         catch (Exception) { }
+    }
+
+    private void CheckSecurityStatus()
+    {
+        var user = _sessionService.CurrentUser;
+        if (user != null && user.NombreUsuario == "admin" && user.RequiresPasswordChange)
+        {
+            ShowSecurityWarning = true;
+        }
+    }
+
+    [RelayCommand]
+    private void DismissSecurityWarning()
+    {
+        ShowSecurityWarning = false;
+    }
+
+    [RelayCommand]
+    private void NavigateToUserProfile()
+    {
+        // En el futuro, navegar al perfil. Por ahora solo cerramos el warning.
+        ShowSecurityWarning = false;
+        // Podríamos disparar un mensaje de navegación si existiera la vista de perfil
     }
 
     [RelayCommand]

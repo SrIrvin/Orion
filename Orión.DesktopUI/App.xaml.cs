@@ -44,6 +44,7 @@ public partial class App : System.Windows.Application
 
                 // Navegación UI
                 services.AddSingleton<INavigationService, NavigationService>();
+                services.AddSingleton<IInactivityService, InactivityService>();
 
                 // Servicios de Aplicación
                 services.AddSingleton<IUserSessionService, UserSessionService>();
@@ -90,6 +91,10 @@ public partial class App : System.Windows.Application
             var session = _host.Services.GetRequiredService<IUserSessionService>();
             session.CurrentUser = m.User;
 
+            // Iniciar monitoreo de inactividad
+            var inactivityService = _host.Services.GetRequiredService<IInactivityService>();
+            inactivityService.StartMonitoring();
+
             var mainView = _host.Services.GetRequiredService<MainView>();
             mainView.Show();
             _loginView?.Close();
@@ -98,6 +103,10 @@ public partial class App : System.Windows.Application
         // Suscribirse al mensaje de logout
         WeakReferenceMessenger.Default.Register<LogoutMessage>(this, (r, m) =>
         {
+            // Detener monitoreo
+            var inactivityService = _host.Services.GetRequiredService<IInactivityService>();
+            inactivityService.StopMonitoring();
+
             // Reabrir Login
             _loginView = _host.Services.GetRequiredService<LoginView>();
             _loginView.Show();
@@ -106,6 +115,35 @@ public partial class App : System.Windows.Application
             var activeMainView = System.Windows.Application.Current.Windows.OfType<MainView>().FirstOrDefault();
             activeMainView?.Close();
         });
+
+        // Manejar tiempo de inactividad
+        var globalInactivity = _host.Services.GetRequiredService<IInactivityService>();
+        globalInactivity.OnInactivityTimeout += () =>
+        {
+            Dispatcher.Invoke(() =>
+            {
+                var session = _host.Services.GetRequiredService<IUserSessionService>();
+                if (session.CurrentUser != null)
+                {
+                    MessageBox.Show("Su sesión ha expirado por inactividad.", "Seguridad", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    
+                    // Disparar Logout
+                    var mainVm = System.Windows.Application.Current.Windows.OfType<MainView>().FirstOrDefault()?.DataContext as MainViewModel;
+                    if (mainVm != null)
+                    {
+                        mainVm.LogoutCommand.Execute(null);
+                    }
+                    else 
+                    {
+                        // Fallback si no hay MainView
+                        session.CurrentUser = null;
+                        var secureConfig = _host.Services.GetRequiredService<ISecureConfigService>();
+                        secureConfig.ClearSession();
+                        WeakReferenceMessenger.Default.Send(new LogoutMessage());
+                    }
+                }
+            });
+        };
     }
 
     private void LogError(string source, Exception? ex)

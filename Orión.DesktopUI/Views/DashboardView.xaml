@@ -20,6 +20,30 @@
                        FontWeight="Black" Foreground="{StaticResource PrimaryBrush}"/>
             <TextBlock Text="Estado actual del sistema de mantenimiento" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
                        Foreground="{StaticResource TextSecondaryBrush}"/>
+
+            <!-- BANNER DE SEGURIDAD -->
+            <materialDesign:Card Background="#FFF4F3" BorderBrush="#FF6F61" BorderThickness="1" 
+                                 Margin="0,16,0,0" Padding="16" UniformCornerRadius="8"
+                                 Visibility="{Binding ShowSecurityWarning, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <DockPanel>
+                    <materialDesign:PackIcon Kind="ShieldAlert" Foreground="#FF6F61" Width="24" Height="24" 
+                                             VerticalAlignment="Center" Margin="0,0,16,0"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="⚠️ SEGURIDAD EN RIESGO: Contraseña por defecto detectada" 
+                                   FontWeight="Bold" Foreground="#FF6F61"/>
+                        <TextBlock Text="Está utilizando las credenciales de administrador predeterminadas. Se recomienda cambiar su contraseña ahora mismo por seguridad." 
+                                   FontSize="12" Opacity="0.8"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                Content="RECORDAR DESPUÉS" Command="{Binding DismissSecurityWarningCommand}"
+                                Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,8,0"/>
+                        <Button Style="{StaticResource MaterialDesignRaisedButton}" 
+                                Content="CAMBIAR AHORA" Command="{Binding NavigateToUserProfileCommand}"
+                                Background="#FF6F61" BorderBrush="#FF6F61" Foreground="White"/>
+                    </StackPanel>
+                </DockPanel>
+            </materialDesign:Card>
         </StackPanel>
 
         <!-- Tarjetas KPI -->

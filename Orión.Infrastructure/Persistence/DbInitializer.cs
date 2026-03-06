@@ -48,7 +48,9 @@ public static class DbInitializer
                 PasswordHash = BC.HashPassword("admin123"),
                 Email = "admin@orion.com",
                 Rol = "Admin",
-                Activo = true
+                Activo = true,
+                RequiresPasswordChange = true,
+                LastPasswordChange = DateTime.UtcNow
             });
             context.SaveChanges();
         }

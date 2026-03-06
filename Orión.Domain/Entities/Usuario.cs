@@ -8,6 +8,10 @@ public class Usuario : BaseEntity
     public string? Email { get; set; }
     public string Rol { get; set; } = "Operador"; // Roles: Admin, Tecnico, Operador
 
+    // Seguridad Proactiva
+    public DateTime? LastPasswordChange { get; set; }
+    public bool RequiresPasswordChange { get; set; } = false;
+
     // Auditoría básica
     public bool Activo { get; set; } = true;
 }

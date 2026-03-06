@@ -240,6 +240,8 @@ public class OrionDbContext : DbContext, IOrionDbContext
             entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(100);
             entity.Property(e => e.Rol).HasColumnName("Rol").HasMaxLength(20).IsRequired();
             entity.Property(e => e.CreatedAt).HasColumnName("Fecha_Creacion");
+            entity.Property(e => e.LastPasswordChange).HasColumnName("Ultimo_Cambio_Pass");
+            entity.Property(e => e.RequiresPasswordChange).HasColumnName("Requiere_Cambio_Pass").HasDefaultValue(false);
             entity.Property(e => e.Activo).HasColumnName("Activo").HasDefaultValue(true);
 
             entity.HasIndex(e => e.NombreUsuario).IsUnique();
