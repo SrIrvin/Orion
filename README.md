@@ -1,68 +1,90 @@
-# Orión - Sistema de Gestión de Mantenimiento 🚀
+# Orión - Sistema de Gestión de Mantenimiento Industrial 🚀
 
-Orión es una solución integral para la gestión de mantenimiento industrial, diseñada bajo estándares de **Clean Architecture** y principios **SOLID**. El sistema permite administrar maquinaria, personal técnico, componentes y solicitudes de servicio, integrando un control de acceso basado en roles (RBAC) y una interfaz moderna basada en Material Design.
+Orión es una solución empresarial de alto rendimiento para la gestión de mantenimiento industrial, diseñada bajo estándares de **Clean Architecture** y principios **SOLID**. El sistema permite una administración integral de activos (maquinaria, componentes), personal técnico y órdenes de servicio, con un enfoque en la seguridad, la trazabilidad y la experiencia de usuario moderna.
+
+[![.NET 9](https://img.shields.io/badge/.NET-9.0-512bd4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/download)
+[![WPF](https://img.shields.io/badge/UI-WPF%20%7C%20Material%20Design-blue?style=flat-square)](https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
 ## 🏗️ Arquitectura del Proyecto
 
-El proyecto sigue el patrón de **Arquitectura Limpia**, separando las preocupaciones en cuatro capas bien definidas:
+El proyecto implementa una **Arquitectura Limpia (Clean Architecture)** con desacoplamiento total entre la lógica de negocio y la infraestructura:
 
-*   **Orión.Domain:** Contiene las entidades de negocio, interfaces de repositorio y excepciones globales. Es la capa central y no tiene dependencias externas.
-*   **Orión.Application:** Define la lógica de negocio, interfaces de servicios, DTOs y casos de uso.
-*   **Orión.Infrastructure:** Implementa el acceso a datos mediante **Entity Framework Core**, la persistencia en **PostgreSQL**, repositorios genéricos y servicios de infraestructura (como generación de reportes).
-*   **Orión.DesktopUI:** Capa de presentación construida con **WPF (Windows Presentation Foundation)** siguiendo el patrón **MVVM (Model-View-ViewModel)**.
+*   **`Orión.Domain`**: El núcleo del sistema. Contiene las entidades, enums, excepciones personalizadas y reglas de negocio puras. Sin dependencias externas.
+*   **`Orión.Application`**: Casos de uso y servicios de aplicación. Gestiona DTOs, validaciones y la orquestación del negocio.
+*   **`Orión.Infrastructure`**: Implementación de la persistencia con **EF Core**, repositorios genéricos, y servicios de bajo nivel como seguridad de configuración y generación de PDF.
+*   **`Orión.DesktopUI`**: Capa de presentación avanzada en **WPF** utilizando el patrón **MVVM** con generadores de código para una reactividad óptima.
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Stack Tecnológico
 
-*   **Lenguaje:** C# 13 / .NET 9
-*   **Interfaz:** WPF con [Material Design In XAML](http://materialdesigninxaml.net/)
-*   **MVVM:** [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) (Source Generators)
-*   **Persistencia:** Entity Framework Core con Npgsql (PostgreSQL)
-*   **Seguridad:** BCrypt.Net para el hasheo de contraseñas
-*   **Pruebas:** xUnit, FluentAssertions y Moq
-*   **Reportes:** QuestPDF / iText7 (según implementación)
+*   **Framework:** .NET 9 (C# 13)
+*   **Interfaz de Usuario:** WPF + [Material Design In XAML](http://materialdesigninxaml.net/)
+*   **Patrón MVVM:** [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) (ObservableProperty, RelayCommand)
+*   **Bases de Datos Soportadas:** 
+    *   **PostgreSQL** (Producción/Escalabilidad)
+    *   **MS Access / Jet** (Portabilidad/Entornos locales)
+*   **ORM:** Entity Framework Core 9.0
+*   **Reportes:** [QuestPDF](https://www.questpdf.com/) (Motor de diseño fluído para PDFs profesionales)
+*   **Seguridad:** 
+    *   **BCrypt.Net-Next** para hashing de contraseñas.
+    *   **Data Protection API (DPAPI)** para encriptación de configuraciones locales.
 
-## ✨ Funcionalidades Clave
+## ✨ Características Destacadas
 
-*   **Control de Acceso (RBAC):** Diferenciación entre usuarios **Admin** (gestión total) y **Operadores** (solo lectura/operaciones básicas).
-*   **Gestión de Catálogos:** CRUD completo para Maquinaria, Componentes, Técnicos y Usuarios.
-*   **Ventanas Flotantes:** Implementación de `DialogHost` para formularios fluidos y modernos sin ventanas emergentes del sistema.
-*   **Borrado Lógico:** Sistema de desactivación de registros para preservar la integridad referencial y el historial de mantenimiento.
-*   **Búsqueda Reactiva:** Filtrado instantáneo en todas las tablas del sistema.
-*   **Generación de Reportes:** Exportación de órdenes de servicio en formato PDF.
+*   **🛡️ Configuración Segura:** Las cadenas de conexión y preferencias de usuario no se guardan en texto plano en `appsettings.json`, sino en un almacén binario encriptado (`SecureConfigService`).
+*   **📊 Dashboard Inteligente:** Visualización de salud de maquinaria y mapas de calor (Heatmaps) de actividad global generados dinámicamente.
+*   **🔌 Multi-Proveedor de Datos:** Capacidad de alternar entre motores de base de datos (Access vs PostgreSQL) mediante configuración dinámica en tiempo de ejecución.
+*   **📄 Reportes Profesionales:** Generación automática de reportes de servicio en PDF con diseño moderno y tablas detalladas.
+*   **⏳ Gestión de Sesiones:** Control automático de inactividad con cierre de sesión seguro y persistencia opcional de credenciales ("Recordarme").
+*   **♻️ Ciclo de Vida de Activos:** Seguimiento detallado de componentes por máquina, historial de fallas y estados de servicio (Pendiente, En Proceso, Completado).
 
-## 🚀 Configuración e Instalación
+## 🚀 Instalación y Ejecución
 
 ### Requisitos Previos
-1.  **PostgreSQL:** Asegúrate de tener una instancia corriendo (puerto por defecto: 5433 o configurar en `appsettings.json` / `OrionDbContext`).
-2.  **.NET 9 SDK:** Instalado en tu sistema.
+1.  **.NET 9 SDK** instalado.
+2.  (Opcional) Instancia de **PostgreSQL** si se desea usar este motor. Por defecto, el sistema puede inicializarse con **MS Access**.
 
-### Configuración de la Base de Datos
-El sistema utiliza un inicializador automático (`DbInitializer`) que crea la base de datos, aplica las migraciones y carga los datos de prueba al arrancar.
+### Configuración Inicial
+El sistema cuenta con un `DbInitializer` que detecta el entorno y:
+1.  Crea la base de datos automáticamente.
+2.  Aplica las migraciones de EF Core.
+3.  Carga datos semilla (Seed Data) para pruebas si no es entorno de producción.
 
-### Ejecución
-```bash
-cd Orión
+### Compilación y Ejecución
+```powershell
+# Clonar el repositorio
+git clone https://github.com/SrIrvin/Orion.git
+cd Orion
+
+# Compilar la solución
+dotnet build
+
+# Ejecutar la aplicación UI
 dotnet run --project Orión.DesktopUI
 ```
 
-## 🔐 Credenciales por Defecto (Pruebas)
+## 🔐 Acceso de Prueba (Modo Staging)
 
-| Usuario | Contraseña | Rol | Permisos |
-| :--- | :--- | :--- | :--- |
-| `admin` | `admin123` | Admin | Acceso Total |
-| `operador` | `user123` | Operador | Solo lectura y Solicitudes |
+Si el sistema inicia en modo desarrollo/staging, puedes usar las siguientes credenciales:
 
-## 🧪 Pruebas Unitarias
+| Usuario | Contraseña | Rol |
+| :--- | :--- | :--- |
+| `admin` | `admin123` | Administrador |
+| `operador` | `user123` | Operador |
 
-El proyecto cuenta con una suite de tests automatizados que validan la lógica de negocio y los ViewModels.
+## 🧪 Calidad y Pruebas
 
-```bash
-dotnet test Orión/Orión.sln
+El proyecto mantiene una alta integridad de código validada mediante pruebas automatizadas:
+
+```powershell
+# Ejecutar todas las pruebas (xUnit + Moq + FluentAssertions)
+dotnet test
 ```
+*Estado actual: 54 pruebas exitosas verificando lógica de servicios y ViewModels.*
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia **MIT** - consulta el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto se distribuye bajo la licencia **MIT**. Consulta el archivo `LICENSE` para más información.
 
 ---
-*Desarrollado con enfoque en Clean Code y Excelencia Técnica por sr_irvin.*
+*Desarrollado con arquitectura empresarial por **SrIrvin**.*
