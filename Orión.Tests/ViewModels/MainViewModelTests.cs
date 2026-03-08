@@ -16,6 +16,7 @@ public class MainViewModelTests
     private readonly Mock<IUserSessionService> _mockSession;
     private readonly Mock<IConfiguration> _mockConfig;
     private readonly Mock<ISecureConfigService> _mockSecureConfig;
+    private readonly Mock<IMessageService> _mockMessage;
 
     public MainViewModelTests()
     {
@@ -23,6 +24,7 @@ public class MainViewModelTests
         _mockSession = new Mock<IUserSessionService>();
         _mockConfig = new Mock<IConfiguration>();
         _mockSecureConfig = new Mock<ISecureConfigService>();
+        _mockMessage = new Mock<IMessageService>();
 
         _mockSecureConfig.Setup(s => s.LoadConfig()).Returns(new DbConfigurationDto());
     }
@@ -31,7 +33,7 @@ public class MainViewModelTests
     public void Constructor_Should_Navigate_To_Dashboard()
     {
         // Act
-        var vm = new MainViewModel(_mockNav.Object, _mockSession.Object, _mockConfig.Object, _mockSecureConfig.Object);
+        var vm = new MainViewModel(_mockNav.Object, _mockSession.Object, _mockConfig.Object, _mockSecureConfig.Object, _mockMessage.Object);
 
         // Assert
         _mockNav.Verify(n => n.NavigateTo<DashboardView>(), Times.Once);
@@ -41,7 +43,7 @@ public class MainViewModelTests
     public void NavigateToMaquinaria_Should_Call_NavigationService()
     {
         // Arrange
-        var vm = new MainViewModel(_mockNav.Object, _mockSession.Object, _mockConfig.Object, _mockSecureConfig.Object);
+        var vm = new MainViewModel(_mockNav.Object, _mockSession.Object, _mockConfig.Object, _mockSecureConfig.Object, _mockMessage.Object);
 
         // Act
         vm.NavigateToMaquinariaCommand.Execute(null);
@@ -56,7 +58,7 @@ public class MainViewModelTests
         // Arrange
         _mockSecureConfig.Setup(s => s.TestConnection(It.IsAny<DbConfigurationDto>()))
                          .ReturnsAsync(true);
-        var vm = new MainViewModel(_mockNav.Object, _mockSession.Object, _mockConfig.Object, _mockSecureConfig.Object);
+        var vm = new MainViewModel(_mockNav.Object, _mockSession.Object, _mockConfig.Object, _mockSecureConfig.Object, _mockMessage.Object);
 
         // Act
         await vm.TestConnectionCommand.ExecuteAsync(null);
@@ -70,17 +72,15 @@ public class MainViewModelTests
     public void SaveConfigurationCommand_ShouldInvokeSecureConfigService()
     {
         // Arrange
-        var vm = new MainViewModel(_mockNav.Object, _mockSession.Object, _mockConfig.Object, _mockSecureConfig.Object);
+        var vm = new MainViewModel(_mockNav.Object, _mockSession.Object, _mockConfig.Object, _mockSecureConfig.Object, _mockMessage.Object);
         var testConfig = new DbConfigurationDto { Provider = "Access", AccessFilePath = "test.accdb" };
         vm.ConfigEditBuffer = testConfig;
 
         // Act
-        // Note: MessageBox.Show will block in real UI, but in tests we might need to handle it.
-        // For simplicity, we just check if SaveConfig was called.
-        // In a real scenario, we'd wrap MessageBox in a service.
-        try { vm.SaveConfigurationCommand.Execute(null); } catch { /* Ignore UI closing error in tests */ }
+        try { vm.SaveConfigurationCommand.Execute(null); } catch { /* Ignore UI closing error in tests (DialogHost) */ }
 
         // Assert
         _mockSecureConfig.Verify(s => s.SaveConfig(It.Is<DbConfigurationDto>(c => c.Provider == "Access")), Times.Once);
+        _mockMessage.Verify(m => m.ShowInfo(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
     }
 }

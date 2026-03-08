@@ -21,6 +21,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IUserSessionService _sessionService;
     private readonly IConfiguration _configuration;
     private readonly ISecureConfigService _secureConfigService;
+    private readonly IMessageService _messageService;
 
     [ObservableProperty]
     private bool _isAdmin;
@@ -49,12 +50,14 @@ public partial class MainViewModel : ObservableObject
         INavigationService navigationService, 
         IUserSessionService sessionService, 
         IConfiguration configuration,
-        ISecureConfigService secureConfigService)
+        ISecureConfigService secureConfigService,
+        IMessageService messageService)
     {
         _navigationService = navigationService;
         _sessionService = sessionService;
         _configuration = configuration;
         _secureConfigService = secureConfigService;
+        _messageService = messageService;
 
         _navigationService.CurrentViewChanged += () => OnPropertyChanged(nameof(CurrentView));
 
@@ -91,7 +94,7 @@ public partial class MainViewModel : ObservableObject
     private void SaveConfiguration()
     {
         _secureConfigService.SaveConfig(ConfigEditBuffer);
-        MessageBox.Show("Configuración guardada exitosamente. La aplicación utilizará estos cambios en el próximo inicio.", "Configuración", MessageBoxButton.OK, MessageBoxImage.Information);
+        _messageService.ShowInfo("Configuración guardada exitosamente. La aplicación utilizará estos cambios en el próximo inicio.", "Configuración");
         
         // Cerrar el diálogo usando el ID global
         MaterialDesignThemes.Wpf.DialogHost.Close("MainDialogHost");

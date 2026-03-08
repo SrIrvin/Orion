@@ -19,6 +19,7 @@ public static class DependencyInjection
     {
         // Registrar Servicio de Configuración Segura
         services.AddSingleton<ISecureConfigService, SecureConfigService>();
+        // IMessageService implementation will be registered in the UI layer
 
         // Obtener configuración preferida del usuario (archivo binario cifrado)
         using var tempProvider = services.BuildServiceProvider();

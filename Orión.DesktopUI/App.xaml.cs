@@ -44,6 +44,7 @@ public partial class App : System.Windows.Application
                 // Navegación UI
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<IInactivityService, InactivityService>();
+                services.AddSingleton<IMessageService, WpfMessageService>();
 
                 // Servicios de Aplicación
                 services.AddSingleton<IUserSessionService, UserSessionService>();
